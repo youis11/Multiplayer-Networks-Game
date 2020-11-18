@@ -60,12 +60,13 @@ private:
 
 	uint32 playerId = 0;
 	uint32 networkId = 0;
-
+	bool ping = true;
 
 	// Connecting stage
 
 	float secondsSinceLastHello = 0.0f;
-
+	float lastPacketReceivedTime = 0.0f;
+	float secondsSinceLastPing = 0.0f;
 
 	// Input ///////////
 

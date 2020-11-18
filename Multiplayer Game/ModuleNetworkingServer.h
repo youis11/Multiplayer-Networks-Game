@@ -53,6 +53,7 @@ private:
 		// TODO(you): UDP virtual connection lab session
 		// TODO(you): World state replication lab session
 		// TODO(you): Reliability on top of UDP lab session
+		double lastPacketReceivedTime = 0.0f;
 
 		uint32 nextExpectedInputSequenceNumber = 0;
 		InputController gamepad;
@@ -122,6 +123,7 @@ private:
 
 
 	// TODO(you): UDP virtual connection lab session
+	float secondsSinceLastPing = 0.0f;
 
 };
 

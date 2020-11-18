@@ -36,6 +36,8 @@ void ModuleNetworkingServer::onStart()
 	}
 
 	state = ServerState::Listening;
+
+	secondsSinceLastPing = 0.0f;
 }
 
 void ModuleNetworkingServer::onGui()
@@ -115,7 +117,6 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 					proxy->connected = true;
 					proxy->name = playerName;
 					proxy->clientId = nextClientId++;
-
 					// Create new network object
 					vec2 initialPosition = 500.0f * vec2{ Random.next() - 0.5f, Random.next() - 0.5f};
 					float initialAngle = 360.0f * Random.next();
@@ -136,6 +137,7 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 				welcomePacket << proxy->clientId;
 				welcomePacket << proxy->gameObject->networkId;
 				sendPacket(welcomePacket, fromAddress);
+				proxy->lastPacketReceivedTime = Time.time;
 
 				// Send all network objects to the new player
 				uint16 networkGameObjectsCount;
@@ -189,6 +191,11 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 		}
 
 		// TODO(you): UDP virtual connection lab session
+		else if (message == ClientMessage::Ping) {
+			if (proxy != nullptr) {
+				proxy->lastPacketReceivedTime = Time.time;
+			}
+		}
 	}
 }
 
@@ -196,6 +203,8 @@ void ModuleNetworkingServer::onUpdate()
 {
 	if (state == ServerState::Listening)
 	{
+		secondsSinceLastPing += Time.deltaTime;
+
 		// Handle networked game object destructions
 		for (DelayedDestroyEntry &destroyEntry : netGameObjectsToDestroyWithDelay)
 		{
@@ -215,7 +224,16 @@ void ModuleNetworkingServer::onUpdate()
 			if (clientProxy.connected)
 			{
 				// TODO(you): UDP virtual connection lab session
+				if (secondsSinceLastPing >= PING_INTERVAL_SECONDS) {
+					OutputMemoryStream packet;
+					packet << PROTOCOL_ID;
+					packet << ServerMessage::Ping;
+					sendPacket(packet.GetBufferPtr(), packet.GetSize(), clientProxy.address);
+				}
 
+				if (Time.time - clientProxy.lastPacketReceivedTime >= DISCONNECT_TIMEOUT_SECONDS)
+					onConnectionReset(clientProxy.address);
+				
 				// Don't let the client proxy point to a destroyed game object
 				if (!IsValid(clientProxy.gameObject))
 				{
@@ -225,8 +243,10 @@ void ModuleNetworkingServer::onUpdate()
 				// TODO(you): World state replication lab session
 
 				// TODO(you): Reliability on top of UDP lab session
-			}
+			}			
 		}
+		if (secondsSinceLastPing >= PING_INTERVAL_SECONDS)
+			secondsSinceLastPing = 0.0f;
 	}
 }
 

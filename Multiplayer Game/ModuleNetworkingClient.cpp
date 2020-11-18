@@ -51,6 +51,8 @@ void ModuleNetworkingClient::onStart()
 
 	secondsSinceLastHello = 9999.0f;
 	secondsSinceLastInputDelivery = 0.0f;
+	secondsSinceLastPing = 0.0f;
+	lastPacketReceivedTime = Time.time;
 }
 
 void ModuleNetworkingClient::onGui()
@@ -103,6 +105,7 @@ void ModuleNetworkingClient::onGui()
 void ModuleNetworkingClient::onPacketReceived(const InputMemoryStream &packet, const sockaddr_in &fromAddress)
 {
 	// TODO(you): UDP virtual connection lab session
+	lastPacketReceivedTime = Time.time;
 
 	uint32 protoId;
 	packet >> protoId;
@@ -132,6 +135,10 @@ void ModuleNetworkingClient::onPacketReceived(const InputMemoryStream &packet, c
 		// TODO(you): World state replication lab session
 
 		// TODO(you): Reliability on top of UDP lab session
+
+		if (message == ServerMessage::Ping)
+			lastPacketReceivedTime = Time.time;
+
 	}
 }
 
@@ -141,7 +148,6 @@ void ModuleNetworkingClient::onUpdate()
 
 
 	// TODO(you): UDP virtual connection lab session
-
 
 	if (state == ClientState::Connecting)
 	{
@@ -162,8 +168,6 @@ void ModuleNetworkingClient::onUpdate()
 	}
 	else if (state == ClientState::Connected)
 	{
-		// TODO(you): UDP virtual connection lab session
-
 		// Process more inputs if there's space
 		if (inputDataBack - inputDataFront < ArrayCount(inputData))
 		{
@@ -203,8 +207,23 @@ void ModuleNetworkingClient::onUpdate()
 
 			sendPacket(packet, serverAddress);
 		}
+		secondsSinceLastPing += Time.deltaTime;
 
 		// TODO(you): Latency management lab session
+		if (secondsSinceLastPing >= PING_INTERVAL_SECONDS) {
+			OutputMemoryStream packet;
+			packet << PROTOCOL_ID;
+			packet << ClientMessage::Ping;
+			sendPacket(packet, serverAddress);
+			secondsSinceLastPing = 0.0f;
+		}
+
+
+		// TODO(you): UDP virtual connection lab session
+		if (Time.time - lastPacketReceivedTime >= DISCONNECT_TIMEOUT_SECONDS)
+		{
+			disconnect();
+		}
 
 		// Update camera for player
 		GameObject *playerGameObject = App->modLinkingContext->getNetworkGameObject(networkId);
