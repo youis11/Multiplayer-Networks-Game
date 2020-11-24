@@ -5,18 +5,22 @@
 
 void ReplicationManagerServer::create(uint32 networkId)
 {
+	commands[networkId] = ReplicationAction::Create;
 }
 
 void ReplicationManagerServer::update(uint32 networkId)
 {
+	commands[networkId] = ReplicationAction::Update;
 }
 
 void ReplicationManagerServer::destroy(uint32 networkId)
 {
+	commands[networkId] = ReplicationAction::Destroy;
 }
 
 void ReplicationManagerServer::write(OutputMemoryStream& packet)
 {
+
 	/*
 	● Write the networkId
 	● Write the replicationAction
@@ -31,5 +35,12 @@ void ReplicationManagerServer::write(OutputMemoryStream& packet)
 	● Clear/remove the replication command
 		○ With this we are assuming reliability...
 	*/
+	packet << PROTOCOL_ID;
+	packet << ClientMessage::Input;
 	packet << commands.size();
+
+	for (auto it = commands.begin(); it != commands.end();)
+	{
+
+	}
 }

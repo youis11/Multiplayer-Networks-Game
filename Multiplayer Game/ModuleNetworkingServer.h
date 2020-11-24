@@ -52,6 +52,7 @@ private:
 
 		// TODO(you): UDP virtual connection lab session
 		// TODO(you): World state replication lab session
+
 		// TODO(you): Reliability on top of UDP lab session
 		double lastPacketReceivedTime = 0.0f;
 
@@ -119,7 +120,6 @@ private:
 	ServerState state = ServerState::Stopped;
 
 	uint16 listenPort = 0;
-
 
 
 	// TODO(you): UDP virtual connection lab session

@@ -241,7 +241,9 @@ void ModuleNetworkingServer::onUpdate()
 				}
 
 				// TODO(you): World state replication lab session
-
+				ReplicationManagerServer server;
+				
+				
 				// TODO(you): Reliability on top of UDP lab session
 			}			
 		}
@@ -385,6 +387,7 @@ GameObject * ModuleNetworkingServer::instantiateNetworkObject()
 		if (clientProxies[i].connected)
 		{
 			// TODO(you): World state replication lab session
+			
 		}
 	}
 
@@ -399,6 +402,7 @@ void ModuleNetworkingServer::updateNetworkObject(GameObject * gameObject)
 		if (clientProxies[i].connected)
 		{
 			// TODO(you): World state replication lab session
+			
 		}
 	}
 }

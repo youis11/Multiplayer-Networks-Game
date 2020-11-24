@@ -95,7 +95,8 @@ private:
 
 	// TODO(you): World state replication lab session
 
-
+	//Replication
+	ReplicationManagerServer repServer;
 
 	//////////////////////////////////////////////////////////////////////
 	// Delivery manager
@@ -103,6 +104,11 @@ private:
 
 	// TODO(you): Reliability on top of UDP lab session
 
+	/*
+	-notificar servidor de que he recivido
+	-
+
+	*/
 
 
 	//////////////////////////////////////////////////////////////////////

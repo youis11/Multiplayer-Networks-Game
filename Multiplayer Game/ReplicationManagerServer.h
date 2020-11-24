@@ -1,3 +1,4 @@
+#include <map>
 #pragma once
 
 // TODO(you): World state replication lab session
@@ -13,5 +14,5 @@ public:
 	void write(OutputMemoryStream& packet);
 
 private:
-	std::vector<ReplicationCommand> commands;
+	std::map<uint32, ReplicationAction> commands;
 };
