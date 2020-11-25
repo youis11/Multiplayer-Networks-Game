@@ -39,8 +39,18 @@ void ReplicationManagerServer::write(OutputMemoryStream& packet)
 	packet << ClientMessage::Input;
 	packet << commands.size();
 
-	for (auto it = commands.begin(); it != commands.end();)
+	for (auto it = commands.begin(); it != commands.end(); it++)
 	{
+		packet << (*it).first; //NetworkID
+		packet << (*it).second; //Action
+
+		if ((*it).second != ReplicationAction::None)
+		{
+			GameObject* gameObject = App->modLinkingContext->getNetworkGameObject((*it).first);
+			packet << gameObject->position.x;
+			packet << gameObject->position.y;
+			//TODO send all info
+		}
 
 	}
 }
