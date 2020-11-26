@@ -85,6 +85,13 @@ void ReplicationManagerClient::deserialize(const InputMemoryStream& packet, Game
 	if (gameObject->sprite == nullptr) {
 		gameObject->sprite = App->modRender->addSprite(gameObject);
 
+		packet.Read(gameObject->sprite->pivot.x);
+		packet.Read(gameObject->sprite->pivot.y);
+		packet.Read(gameObject->sprite->color.x);
+		packet.Read(gameObject->sprite->color.y);
+		packet.Read(gameObject->sprite->color.z);
+		packet.Read(gameObject->sprite->color.w);
+
 		if (textureFilename == "space_background.jpg") {
 			gameObject->sprite->texture = App->modResources->space;
 		}
@@ -109,9 +116,9 @@ void ReplicationManagerClient::deserialize(const InputMemoryStream& packet, Game
 		else if (textureFilename == "explosion1.png") {
 			gameObject->sprite->texture = App->modResources->explosion1;
 		}
-	}
 
-	//packet.Read(gameObject->sprite->order);
+		packet.Read(gameObject->sprite->order);
+	}
 
 	//i guess it doesnt need any else
 	/*packet.Read(gameObject->animation->clip->);
@@ -119,15 +126,15 @@ void ReplicationManagerClient::deserialize(const InputMemoryStream& packet, Game
 		gameObject->animation->clip = App->modResources->explosionClip;*/
 
 	// Collider component
-	/*ColliderType type = ColliderType::None;
+	ColliderType type = ColliderType::None;
 	packet.Read(type);
 	if (gameObject->collider == nullptr) {
 		gameObject->collider = App->modCollision->addCollider(type, gameObject);
 	}
-	packet.Read(gameObject->collider->isTrigger);*/
+	packet.Read(gameObject->collider->isTrigger);
 
 	// "Script" component
-	/*if (gameObject->behaviour == nullptr) {
+	if (gameObject->behaviour == nullptr) {
 		switch (type) {
 		case ColliderType::Player: {
 			gameObject->behaviour = new Spaceship;
@@ -144,8 +151,8 @@ void ReplicationManagerClient::deserialize(const InputMemoryStream& packet, Game
 		}
 		}
 		gameObject->behaviour->gameObject = gameObject;
-	}*/
+	}
 
 	// Tag for custom usage
-	//packet.Read(gameObject->tag);
+	packet.Read(gameObject->tag);
 }

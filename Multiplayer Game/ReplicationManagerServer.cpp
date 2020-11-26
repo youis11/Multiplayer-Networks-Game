@@ -91,6 +91,13 @@ void ReplicationManagerServer::serialize(OutputMemoryStream& packet, GameObject*
 	// Texture component
 	std::string textureFilename =  gameObject->sprite->texture->filename;
 	packet.Write(textureFilename);
+	packet.Write(gameObject->sprite->pivot.x);
+	packet.Write(gameObject->sprite->pivot.y);
+	packet.Write(gameObject->sprite->color.x);
+	packet.Write(gameObject->sprite->color.y);
+	packet.Write(gameObject->sprite->color.z);
+	packet.Write(gameObject->sprite->color.w);
+	packet.Write(gameObject->sprite->order);
 
 	/*if (gameObject->sprite && gameObject->sprite->texture) {
 		packet.Write(gameObject->sprite->texture->id);
@@ -102,9 +109,9 @@ void ReplicationManagerServer::serialize(OutputMemoryStream& packet, GameObject*
 	//packet.Write(gameObject->animation); //i guess it doesnt need any else
 
 	// Collider component
-	//packet.Write(gameObject->collider->type);
-	//packet.Write(gameObject->collider->isTrigger);
+	packet.Write(gameObject->collider->type);
+	packet.Write(gameObject->collider->isTrigger);
 
 	//// Tag for custom usage
-	//packet.Write(gameObject->tag);
+	packet.Write(gameObject->tag);
 }
