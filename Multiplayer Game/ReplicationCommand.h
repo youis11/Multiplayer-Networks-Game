@@ -7,6 +7,7 @@ enum class ReplicationAction {
 
 struct ReplicationCommand
 {
+public:
 	ReplicationAction action;
 	uint32 networkId;
 

@@ -5,13 +5,15 @@
 class ReplicationManagerServer
 {
 public:
+	ReplicationManagerServer();
+	~ReplicationManagerServer();
 
 	void create(uint32 networkId);
 	void update(uint32 networkId);
 	void destroy(uint32 networkId);
 
 	void write(OutputMemoryStream& packet);
-	void serialize(OutputMemoryStream& packet, GameObject* gameobject, uint32 networkID) const;
+	void serialize(OutputMemoryStream& packet, GameObject* gameObject) const;
 
 private:
 	std::vector<ReplicationCommand> m_replicationCommands;

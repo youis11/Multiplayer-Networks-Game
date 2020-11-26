@@ -3,6 +3,15 @@
 
 // TODO(you): World state replication lab session
 
+ReplicationManagerServer::ReplicationManagerServer()
+	: m_replicationCommands()
+{
+}
+
+ReplicationManagerServer::~ReplicationManagerServer()
+{
+}
+
 void ReplicationManagerServer::create(uint32 networkId)
 {
 	m_replicationCommands.push_back(ReplicationCommand(ReplicationAction::Create, networkId));
@@ -20,7 +29,6 @@ void ReplicationManagerServer::destroy(uint32 networkId)
 
 void ReplicationManagerServer::write(OutputMemoryStream& packet)
 {
-
 	/*
 	● Write the networkId
 	● Write the replicationAction
@@ -44,25 +52,26 @@ void ReplicationManagerServer::write(OutputMemoryStream& packet)
 
 		switch (action) {
 			case ReplicationAction::Create: {
-				packet.Write(networkID);
-				packet.Write(action);
-				serialize(packet, gameObject, networkID);			}
-			case ReplicationAction::Update: {
+				case ReplicationAction::Update: {
+					if (gameObject == nullptr) {
+						continue;
+					}
+					packet.Write(networkID);
+					packet.Write(action);
+					serialize(packet, gameObject);
+					break;
+				}
 
-				packet.Write(networkID);
-				packet.Write(action);
-				serialize(packet, gameObject, networkID);
-				break;
-			}
+				case ReplicationAction::Destroy: {
+					packet.Write(networkID);
+					packet.Write(action);
+					break;
+				}
 
-			case ReplicationAction::Destroy: {
-				break;
+				default: {
+					break;
+				}
 			}
-
-			default: {
-				break;
-			}
-			
 		}
 	}
 
@@ -70,10 +79,8 @@ void ReplicationManagerServer::write(OutputMemoryStream& packet)
 }
 
 
-void ReplicationManagerServer::serialize(OutputMemoryStream& packet, GameObject* gameobject, uint32 networkID) const
+void ReplicationManagerServer::serialize(OutputMemoryStream& packet, GameObject* gameObject) const
 {
-	GameObject* gameObject = App->modLinkingContext->getNetworkGameObject(networkID);
-
 	// Transform component
 	packet.Write(gameObject->position.x);
 	packet.Write(gameObject->position.y);
@@ -82,15 +89,22 @@ void ReplicationManagerServer::serialize(OutputMemoryStream& packet, GameObject*
 	packet.Write(gameObject->angle);
 
 	// Texture component
-	std::string textureFilename =  gameObject->sprite->texture->filename;
-	packet.Write(textureFilename);
+	//std::string textureFilename =  gameObject->sprite->texture->filename;
+	//packet.Write(textureFilename);
+
+	if (gameObject->sprite && gameObject->sprite->texture) {
+		packet.Write(gameObject->sprite->texture->id);
+	}
+	else {
+		packet.Write(-1);
+	}
 
 	//packet.Write(gameObject->animation); //i guess it doesnt need any else
 
 	// Collider component
-	packet.Write(gameObject->collider->type);
-	packet.Write(gameObject->collider->isTrigger);
+	//packet.Write(gameObject->collider->type);
+	//packet.Write(gameObject->collider->isTrigger);
 
-	// Tag for custom usage
-	packet.Write(gameObject->tag);
+	//// Tag for custom usage
+	//packet.Write(gameObject->tag);
 }

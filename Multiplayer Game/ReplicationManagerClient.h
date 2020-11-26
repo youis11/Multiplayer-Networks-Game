@@ -5,6 +5,6 @@ class ReplicationManagerClient
 {
 public:
 	void read(const InputMemoryStream& packet);
-	void deserialize(const InputMemoryStream& packet, GameObject  *gameobject, uint32 networkID);
+	void deserialize(const InputMemoryStream& packet, GameObject  *gameobject);
 
 };

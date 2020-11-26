@@ -6,6 +6,7 @@
 void ModuleResources::TaskLoadTexture::execute()
 {
 	*texture = App->modTextures->loadTexture(filename);
+	(*texture)->id = id;
 }
 
 #endif
@@ -25,14 +26,14 @@ bool ModuleResources::init()
 	loadingFinished = true;
 	completionRatio = 1.0f;
 #else
-	loadTextureAsync("space_background.jpg", &space);
-	loadTextureAsync("asteroid1.png",        &asteroid1);
-	loadTextureAsync("asteroid2.png",        &asteroid2);
-	loadTextureAsync("spacecraft1.png",      &spacecraft1);
-	loadTextureAsync("spacecraft2.png",      &spacecraft2);
-	loadTextureAsync("spacecraft3.png",      &spacecraft3);
-	loadTextureAsync("laser.png",            &laser);
-	loadTextureAsync("explosion1.png",       &explosion1);
+	loadTextureAsync("space_background.jpg", &space, 0);
+	loadTextureAsync("asteroid1.png",        &asteroid1, 1);
+	loadTextureAsync("asteroid2.png",        &asteroid2, 2);
+	loadTextureAsync("spacecraft1.png",      &spacecraft1, 3);
+	loadTextureAsync("spacecraft2.png",      &spacecraft2, 4);
+	loadTextureAsync("spacecraft3.png",      &spacecraft3, 5);
+	loadTextureAsync("laser.png",            &laser, 6);
+	loadTextureAsync("explosion1.png",       &explosion1, 7);
 #endif
 
 	audioClipLaser = App->modSound->loadAudioClip("laser.wav");
@@ -44,13 +45,14 @@ bool ModuleResources::init()
 
 #if defined(USE_TASK_MANAGER)
 
-void ModuleResources::loadTextureAsync(const char * filename, Texture **texturePtrAddress)
+void ModuleResources::loadTextureAsync(const char * filename, Texture **texturePtrAddress, int id)
 {
 	ASSERT(taskCount < MAX_RESOURCES);
 	
 	TaskLoadTexture *task = &tasks[taskCount++];
 	task->owner = this;
 	task->filename = filename;
+	task->id = id;
 	task->texture = texturePtrAddress;
 
 	App->modTaskManager->scheduleTask(task, this);
