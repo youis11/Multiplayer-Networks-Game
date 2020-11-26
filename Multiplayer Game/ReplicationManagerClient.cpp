@@ -25,6 +25,8 @@ void ReplicationManagerClient::read(const InputMemoryStream& packet)
 
 		uint32 networkID;
 		packet.Read(networkID);
+		if (packet.RemainingByteCount() <= 0)
+			break;
 		ReplicationAction action;
 		packet.Read(action);
 		switch (action) {
@@ -44,7 +46,7 @@ void ReplicationManagerClient::read(const InputMemoryStream& packet)
 		case ReplicationAction::Destroy: {
 			GameObject* gameObject = App->modLinkingContext->getNetworkGameObject(networkID);
 			App->modLinkingContext->unregisterNetworkGameObject(gameObject);
-			App->modGameObject->Destroy(gameObject);
+			Destroy(gameObject);
 			break;
 		}
 
@@ -132,17 +134,17 @@ void ReplicationManagerClient::deserialize(const InputMemoryStream& packet, Game
 		gameObject->collider = App->modCollision->addCollider(type, gameObject);
 	}
 	packet.Read(gameObject->collider->isTrigger);
-
+	//App->modBehaviour->addBehaviour()
 	// "Script" component
 	if (gameObject->behaviour == nullptr) {
 		switch (type) {
 		case ColliderType::Player: {
-			gameObject->behaviour = new Spaceship;
+			gameObject->behaviour = App->modBehaviour->addBehaviour(BehaviourType::Spaceship, gameObject);
 			break;
 		}
 
 		case ColliderType::Laser: {
-			gameObject->behaviour = new Laser;
+			gameObject->behaviour = App->modBehaviour->addBehaviour(BehaviourType::Laser, gameObject);
 			break;
 		}
 

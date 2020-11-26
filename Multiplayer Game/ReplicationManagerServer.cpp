@@ -48,9 +48,22 @@ void ReplicationManagerServer::write(OutputMemoryStream& packet)
 
 		uint32 networkID = replicationCommand.networkId;
 		ReplicationAction action = replicationCommand.action;
-		GameObject* gameObject = App->modLinkingContext->getNetworkGameObject(networkID);
+		packet.Write(networkID);
+		packet.Write(action);
 
 		switch (action) {
+			case ReplicationAction::Create: 
+			case ReplicationAction::Update: {
+				GameObject* gameObject = App->modLinkingContext->getNetworkGameObject(networkID);
+				serialize(packet, gameObject);
+				break;
+			}
+
+			default: {
+				break;
+			}
+		}
+		/*switch (action) {
 			case ReplicationAction::Create: {
 				case ReplicationAction::Update: {
 					if (gameObject == nullptr) {
@@ -72,7 +85,7 @@ void ReplicationManagerServer::write(OutputMemoryStream& packet)
 					break;
 				}
 			}
-		}
+		}*/
 	}
 
 	m_replicationCommands.clear();
@@ -109,8 +122,11 @@ void ReplicationManagerServer::serialize(OutputMemoryStream& packet, GameObject*
 	//packet.Write(gameObject->animation); //i guess it doesnt need any else
 
 	// Collider component
-	packet.Write(gameObject->collider->type);
-	packet.Write(gameObject->collider->isTrigger);
+	if (gameObject->collider != nullptr)
+	{
+		packet.Write(gameObject->collider->type);
+		packet.Write(gameObject->collider->isTrigger);
+	}
 
 	//// Tag for custom usage
 	packet.Write(gameObject->tag);
