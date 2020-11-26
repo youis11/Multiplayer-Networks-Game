@@ -67,7 +67,7 @@ void ReplicationManagerClient::deserialize(const InputMemoryStream& packet, Game
 	packet.Read(gameObject->angle);
 
 	// Texture component
-	int id;
+	/*int id;
 	packet.Read(id);
 
 	if (id != -1)
@@ -77,6 +77,37 @@ void ReplicationManagerClient::deserialize(const InputMemoryStream& packet, Game
 		if (!gameObject->sprite)
 		{
 			gameObject->sprite->texture = App->modTextures->GetTextureByID(id);
+		}
+	}*/
+
+	std::string textureFilename;
+	packet.Read(textureFilename);
+	if (gameObject->sprite == nullptr) {
+		gameObject->sprite = App->modRender->addSprite(gameObject);
+
+		if (textureFilename == "space_background.jpg") {
+			gameObject->sprite->texture = App->modResources->space;
+		}
+		else if (textureFilename == "asteroid1.png") {
+			gameObject->sprite->texture = App->modResources->asteroid1;
+		}
+		else if (textureFilename == "asteroid2.png") {
+			gameObject->sprite->texture = App->modResources->asteroid2;
+		}
+		else if (textureFilename == "spacecraft1.png") {
+			gameObject->sprite->texture = App->modResources->spacecraft1;
+		}
+		else if (textureFilename == "spacecraft2.png") {
+			gameObject->sprite->texture = App->modResources->spacecraft2;
+		}
+		else if (textureFilename == "spacecraft3.png") {
+			gameObject->sprite->texture = App->modResources->spacecraft3;
+		}
+		else if (textureFilename == "laser.png") {
+			gameObject->sprite->texture = App->modResources->laser;
+		}
+		else if (textureFilename == "explosion1.png") {
+			gameObject->sprite->texture = App->modResources->explosion1;
 		}
 	}
 

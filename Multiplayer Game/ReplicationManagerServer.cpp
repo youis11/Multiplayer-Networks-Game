@@ -89,15 +89,15 @@ void ReplicationManagerServer::serialize(OutputMemoryStream& packet, GameObject*
 	packet.Write(gameObject->angle);
 
 	// Texture component
-	//std::string textureFilename =  gameObject->sprite->texture->filename;
-	//packet.Write(textureFilename);
+	std::string textureFilename =  gameObject->sprite->texture->filename;
+	packet.Write(textureFilename);
 
-	if (gameObject->sprite && gameObject->sprite->texture) {
+	/*if (gameObject->sprite && gameObject->sprite->texture) {
 		packet.Write(gameObject->sprite->texture->id);
 	}
 	else {
 		packet.Write(-1);
-	}
+	}*/
 
 	//packet.Write(gameObject->animation); //i guess it doesnt need any else
 
