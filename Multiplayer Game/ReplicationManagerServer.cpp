@@ -85,7 +85,7 @@ void ReplicationManagerServer::serialize(OutputMemoryStream& packet, GameObject*
 	std::string textureFilename =  gameObject->sprite->texture->filename;
 	packet.Write(textureFilename);
 
-	packet.Write(gameObject->animation); //i guess it doesnt need any else
+	//packet.Write(gameObject->animation); //i guess it doesnt need any else
 
 	// Collider component
 	packet.Write(gameObject->collider->type);

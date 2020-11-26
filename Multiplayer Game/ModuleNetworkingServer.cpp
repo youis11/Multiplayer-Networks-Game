@@ -249,6 +249,7 @@ void ModuleNetworkingServer::onUpdate()
 
 				if (clientProxy.secondsSinceLastReplication >= replicationDeliveryIntervalSeconds) {
 					//Again, only this?
+					packet.Write(clientProxy.nextExpectedInputSequenceNumber);
 					clientProxy.m_replicationManager.write(packet);
 					sendPacket(packet, clientProxy.address);
 

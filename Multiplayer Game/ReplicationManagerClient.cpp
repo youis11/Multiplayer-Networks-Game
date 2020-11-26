@@ -66,7 +66,7 @@ void ReplicationManagerClient::deserialize(const InputMemoryStream& packet, Game
 	// Texture component
 	std::string textureFilename;
 	packet.Read(textureFilename);
-	if (gameObject->sprite == nullptr) {
+	if (gameObject->sprite->texture == nullptr) {
 		if (textureFilename == "space_background.jpg") {
 			gameObject->sprite->texture = App->modResources->space;
 		}
@@ -94,9 +94,9 @@ void ReplicationManagerClient::deserialize(const InputMemoryStream& packet, Game
 	}
 
 	//i guess it doesnt need any else
-	packet.Read(gameObject->animation);
+	/*packet.Read(gameObject->animation->clip->);
 	if (gameObject->animation == nullptr)
-		gameObject->animation->clip = App->modResources->explosionClip;
+		gameObject->animation->clip = App->modResources->explosionClip;*/
 
 	// Collider component
 	ColliderType type = ColliderType::None;
