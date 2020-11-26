@@ -133,15 +133,16 @@ void ModuleNetworkingClient::onPacketReceived(const InputMemoryStream &packet, c
 	else if (state == ClientState::Connected)
 	{
 		// TODO(you): World state replication lab session
-		if (message == ServerMessage::Welcome)
-		{
-			repServer.create(networkId);
-		}
+	
 		// TODO(you): Reliability on top of UDP lab session
 
 		if (message == ServerMessage::Ping)
 			lastPacketReceivedTime = Time.time;
-
+		else if (message == ServerMessage::Replication)
+		{
+			//is that all?
+			m_replicationManager.read(packet);
+		}
 	}
 }
 

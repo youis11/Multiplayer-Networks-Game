@@ -51,10 +51,13 @@ private:
 		GameObject *gameObject = nullptr;
 
 		// TODO(you): UDP virtual connection lab session
+		double lastPacketReceivedTime = 0.0f;
+
 		// TODO(you): World state replication lab session
+		float secondsSinceLastReplication = 0.0f;
+		ReplicationManagerServer m_replicationManager;
 
 		// TODO(you): Reliability on top of UDP lab session
-		double lastPacketReceivedTime = 0.0f;
 
 		uint32 nextExpectedInputSequenceNumber = 0;
 		InputController gamepad;
@@ -77,8 +80,6 @@ public:
 	//////////////////////////////////////////////////////////////////////
 
 	GameObject * spawnPlayer(uint8 spaceshipType, vec2 initialPosition, float initialAngle);
-
-
 
 private:
 
@@ -124,6 +125,9 @@ private:
 
 	// TODO(you): UDP virtual connection lab session
 	float secondsSinceLastPing = 0.0f;
+
+	float replicationDeliveryIntervalSeconds = 0.f;
+
 
 };
 
