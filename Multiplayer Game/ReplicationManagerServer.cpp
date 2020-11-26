@@ -46,13 +46,12 @@ void ReplicationManagerServer::write(OutputMemoryStream& packet)
 			case ReplicationAction::Create: {
 				packet.Write(networkID);
 				packet.Write(action);
-				gameObject->write(packet);
-			}
+				serialize(packet, gameObject, networkID);			}
 			case ReplicationAction::Update: {
 
 				packet.Write(networkID);
 				packet.Write(action);
-				gameObject->write(packet);
+				serialize(packet, gameObject, networkID);
 				break;
 			}
 
@@ -68,4 +67,30 @@ void ReplicationManagerServer::write(OutputMemoryStream& packet)
 	}
 
 	m_replicationCommands.clear();
+}
+
+
+void ReplicationManagerServer::serialize(OutputMemoryStream& packet, GameObject* gameobject, uint32 networkID) const
+{
+	GameObject* gameObject = App->modLinkingContext->getNetworkGameObject(networkID);
+
+	// Transform component
+	packet.Write(gameObject->position.x);
+	packet.Write(gameObject->position.y);
+	packet.Write(gameObject->size.x);
+	packet.Write(gameObject->size.y);
+	packet.Write(gameObject->angle);
+
+	// Texture component
+	std::string textureFilename =  gameObject->sprite->texture->filename;
+	packet.Write(textureFilename);
+
+	packet.Write(gameObject->animation); //i guess it doesnt need any else
+
+	// Collider component
+	packet.Write(gameObject->collider->type);
+	packet.Write(gameObject->collider->isTrigger);
+
+	// Tag for custom usage
+	packet.Write(gameObject->tag);
 }
