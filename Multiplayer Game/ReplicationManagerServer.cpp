@@ -5,17 +5,17 @@
 
 void ReplicationManagerServer::create(uint32 networkId)
 {
-	commands[networkId] = ReplicationAction::Create;
+	m_replicationCommands.push_back(ReplicationCommand(ReplicationAction::Create, networkId));
 }
 
 void ReplicationManagerServer::update(uint32 networkId)
 {
-	commands[networkId] = ReplicationAction::Update;
+	m_replicationCommands.push_back(ReplicationCommand(ReplicationAction::Update, networkId));
 }
 
 void ReplicationManagerServer::destroy(uint32 networkId)
 {
-	commands[networkId] = ReplicationAction::Destroy;
+	m_replicationCommands.push_back(ReplicationCommand(ReplicationAction::Destroy, networkId));
 }
 
 void ReplicationManagerServer::write(OutputMemoryStream& packet)
@@ -35,22 +35,37 @@ void ReplicationManagerServer::write(OutputMemoryStream& packet)
 	● Clear/remove the replication command
 		○ With this we are assuming reliability...
 	*/
-	packet << PROTOCOL_ID;
-	packet << ClientMessage::Input;
-	packet << commands.size();
 
-	for (auto it = commands.begin(); it != commands.end(); it++)
-	{
-		packet << (*it).first; //NetworkID
-		packet << (*it).second; //Action
+	for (const auto& replicationCommand : m_replicationCommands) {
 
-		if ((*it).second != ReplicationAction::None)
-		{
-			GameObject* gameObject = App->modLinkingContext->getNetworkGameObject((*it).first);
-			packet << gameObject->position.x;
-			packet << gameObject->position.y;
-			//TODO send all info
+		uint32 networkID = replicationCommand.networkId;
+		ReplicationAction action = replicationCommand.action;
+		GameObject* gameObject = App->modLinkingContext->getNetworkGameObject(networkID);
+
+		switch (action) {
+			case ReplicationAction::Create: {
+				packet.Write(networkID);
+				packet.Write(action);
+				gameObject->write(packet);
+			}
+			case ReplicationAction::Update: {
+
+				packet.Write(networkID);
+				packet.Write(action);
+				gameObject->write(packet);
+				break;
+			}
+
+			case ReplicationAction::Destroy: {
+				break;
+			}
+
+			default: {
+				break;
+			}
+			
 		}
-
 	}
+
+	m_replicationCommands.clear();
 }

@@ -19,5 +19,35 @@ void ReplicationManagerClient::read(const InputMemoryStream& packet)
 		○ Get the object from the linking context
 		○ Unregister it from the linking context
 		○ Destroy it
-*/
+	*/
+
+	uint32 networkID;
+	packet.Read(networkID);
+	ReplicationAction action;
+	packet.Read(action);
+	switch (action) {
+		case ReplicationAction::Create: {
+			GameObject* gameObject = App->modGameObject->Instantiate();
+			App->modLinkingContext->registerNetworkGameObjectWithNetworkId(gameObject, networkID);
+			gameObject->read(packet);
+			break;
+		}
+
+		case ReplicationAction::Update: {
+			GameObject* gameObject = App->modLinkingContext->getNetworkGameObject(networkID);
+			gameObject->read(packet);
+			break;
+		}
+
+		case ReplicationAction::Destroy: {
+			GameObject* gameObject = App->modLinkingContext->getNetworkGameObject(networkID);
+			App->modLinkingContext->unregisterNetworkGameObject(gameObject);
+			App->modGameObject->Destroy(gameObject);
+			break;
+		}
+
+		default: {
+			break;
+		}
+	}
 }
