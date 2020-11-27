@@ -149,7 +149,7 @@ void ReplicationManagerClient::deserialize(const InputMemoryStream& packet, Game
 		}
 
 		default: {
-			gameObject->behaviour = App->modBehaviour->addBehaviour(BehaviourType::Empty, gameObject);
+			gameObject->behaviour = App->modBehaviour->addBehaviour(BehaviourType::Laser, gameObject);
 			break;
 		}
 		}

@@ -6,7 +6,6 @@
 void Laser::start()
 {
 	gameObject->networkInterpolationEnabled = false;
-	//gameObject->collider = App->modCollision->addCollider(ColliderType::Empty, gameObject);
 	App->modSound->playAudioClip(App->modResources->audioClipLaser);
 }
 
@@ -19,17 +18,18 @@ void Laser::update()
 
 	if (isServer)
 	{
-		const float neutralTimeSeconds = 0.1f;
-		if (secondsSinceCreation > neutralTimeSeconds && gameObject->collider == nullptr) {
-			gameObject->collider = App->modCollision->addCollider(ColliderType::Laser, gameObject);
-		}
-
 		const float lifetimeSeconds = 2.0f;
 		if (secondsSinceCreation >= lifetimeSeconds) {
 			NetworkDestroy(gameObject);
 		}
 	}
 }
+
+float Laser::GetSecondsLived()
+{
+	return secondsSinceCreation;
+}
+
 
 
 
@@ -87,6 +87,11 @@ void Spaceship::onInput(const InputController &input)
 			laserBehaviour->isServer = isServer;
 
 			laser->tag = gameObject->tag;
+
+			const float neutralTimeSeconds = 0.1f;
+			if (/*GetSecondsLived() > neutralTimeSeconds && */laser->collider == nullptr) {
+				laser->collider = App->modCollision->addCollider(ColliderType::Laser, gameObject);
+			}
 		}
 	}
 }

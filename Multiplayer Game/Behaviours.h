@@ -31,8 +31,7 @@ enum class BehaviourType : uint8
 {
 	None,
 	Spaceship,
-	Laser,
-	Empty //Test
+	Laser
 };
 
 
@@ -45,6 +44,8 @@ struct Laser : public Behaviour
 	void start() override;
 
 	void update() override;
+
+	float GetSecondsLived();
 };
 
 

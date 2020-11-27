@@ -51,16 +51,26 @@ void ReplicationManagerServer::write(OutputMemoryStream& packet)
 		packet.Write(networkID);
 		packet.Write(action);
 
+		GameObject* gameObject = App->modLinkingContext->getNetworkGameObject(networkID);
 		switch (action) {
 			case ReplicationAction::Create: 
-
-			case ReplicationAction::Update: {
-				GameObject* gameObject = App->modLinkingContext->getNetworkGameObject(networkID);
+			{
 				serialize(packet, gameObject);
 				break;
 			}
-
-			default: {
+			case ReplicationAction::Update: 
+			{
+				serialize(packet, gameObject);
+				break;
+			}
+			case ReplicationAction::Destroy:
+			{
+				App->modLinkingContext->unregisterNetworkGameObject(gameObject);
+				Destroy(gameObject);
+				break;
+			}
+			default: 
+			{
 				break;
 			}
 		}
@@ -123,6 +133,7 @@ void ReplicationManagerServer::serialize(OutputMemoryStream& packet, GameObject*
 	//packet.Write(gameObject->animation); //i guess it doesnt need any else
 
 	// Collider component
+	
 	if (gameObject->collider != nullptr)
 	{
 		packet.Write(gameObject->collider->type);
@@ -130,8 +141,7 @@ void ReplicationManagerServer::serialize(OutputMemoryStream& packet, GameObject*
 	}
 	else
 	{
-		packet.Write(ColliderType::Empty);
-		packet.Write(false);
+		ASSERT(false, "Collider nullpter");
 	}
 
 	// Tag for custom usage

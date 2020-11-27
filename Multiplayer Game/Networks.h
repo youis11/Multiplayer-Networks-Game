@@ -86,7 +86,6 @@ enum class ColliderType
 	None,
 	Player,
 	Laser,
-	Empty //Test
 };
 
 
