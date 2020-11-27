@@ -53,6 +53,7 @@ void ReplicationManagerServer::write(OutputMemoryStream& packet)
 
 		switch (action) {
 			case ReplicationAction::Create: 
+
 			case ReplicationAction::Update: {
 				GameObject* gameObject = App->modLinkingContext->getNetworkGameObject(networkID);
 				serialize(packet, gameObject);
@@ -127,7 +128,12 @@ void ReplicationManagerServer::serialize(OutputMemoryStream& packet, GameObject*
 		packet.Write(gameObject->collider->type);
 		packet.Write(gameObject->collider->isTrigger);
 	}
+	else
+	{
+		packet.Write(ColliderType::Empty);
+		packet.Write(false);
+	}
 
-	//// Tag for custom usage
+	// Tag for custom usage
 	packet.Write(gameObject->tag);
 }

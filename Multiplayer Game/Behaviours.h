@@ -32,6 +32,7 @@ enum class BehaviourType : uint8
 	None,
 	Spaceship,
 	Laser,
+	Empty //Test
 };
 
 

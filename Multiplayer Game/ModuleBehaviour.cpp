@@ -22,7 +22,7 @@ Behaviour *ModuleBehaviour::addBehaviour(BehaviourType behaviourType, GameObject
 	{
 	case BehaviourType::Spaceship:
 		return addSpaceship(parentGameObject);
-	case BehaviourType::Laser:
+	case BehaviourType::Empty:
 		return addLaser(parentGameObject);
 	default:
 		return nullptr;

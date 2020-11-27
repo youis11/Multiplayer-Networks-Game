@@ -6,7 +6,7 @@
 void Laser::start()
 {
 	gameObject->networkInterpolationEnabled = false;
-
+	//gameObject->collider = App->modCollision->addCollider(ColliderType::Empty, gameObject);
 	App->modSound->playAudioClip(App->modResources->audioClipLaser);
 }
 
