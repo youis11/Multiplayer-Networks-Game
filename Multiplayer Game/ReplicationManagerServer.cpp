@@ -29,20 +29,7 @@ void ReplicationManagerServer::destroy(uint32 networkId)
 
 void ReplicationManagerServer::write(OutputMemoryStream& packet)
 {
-	/*
-	● Write the networkId
-	● Write the replicationAction
-	● If replicationAction is Create
-		○ Get the object from linking context
-		○ Serialize its fields
-	● Else if replicationAction is Update
-		○ Get the object from linking context
-		○ Serialize its fields
-	● Else if replicationAction is Destroy
-		○ Nothing else to do
-	● Clear/remove the replication command
-		○ With this we are assuming reliability...
-	*/
+
 
 	for (const auto& replicationCommand : m_replicationCommands) {
 
@@ -65,8 +52,11 @@ void ReplicationManagerServer::write(OutputMemoryStream& packet)
 			}
 			case ReplicationAction::Destroy:
 			{
-				App->modLinkingContext->unregisterNetworkGameObject(gameObject);
-				Destroy(gameObject);
+				//App->modLinkingContext->unregisterNetworkGameObject(gameObject);
+				//Destroy(gameObject);
+				GameObject* gameObjects[100];
+				uint16 pls = 0;
+				App->modLinkingContext->getNetworkGameObjects(gameObjects, &pls);
 				break;
 			}
 			default: 
@@ -143,6 +133,9 @@ void ReplicationManagerServer::serialize(OutputMemoryStream& packet, GameObject*
 	{
 		ASSERT(false, "Collider nullpter");
 	}
+
+	//Behaviour
+	//packet.Write(gameObject->behaviour->type());
 
 	// Tag for custom usage
 	packet.Write(gameObject->tag);

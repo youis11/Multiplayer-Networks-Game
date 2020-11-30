@@ -117,7 +117,7 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 					proxy->connected = true;
 					proxy->name = playerName;
 					proxy->clientId = nextClientId++;
-					proxy->secondsSinceLastReplication = replicationDeliveryIntervalSeconds;
+					//proxy->secondsSinceLastReplication = replicationDeliveryIntervalSeconds;
 
 					// Create new network object
 					vec2 initialPosition = 500.0f * vec2{ Random.next() - 0.5f, Random.next() - 0.5f};
@@ -209,7 +209,6 @@ void ModuleNetworkingServer::onUpdate()
 {
 	if (state == ServerState::Listening)
 	{
-		secondsSinceLastPing += Time.deltaTime;
 
 		// Handle networked game object destructions
 		for (DelayedDestroyEntry &destroyEntry : netGameObjectsToDestroyWithDelay)
@@ -224,6 +223,7 @@ void ModuleNetworkingServer::onUpdate()
 				}
 			}
 		}
+		secondsSinceLastPing += Time.deltaTime;
 
 		for (ClientProxy &clientProxy : clientProxies)
 		{
@@ -234,7 +234,7 @@ void ModuleNetworkingServer::onUpdate()
 					OutputMemoryStream packet;
 					packet << PROTOCOL_ID;
 					packet << ServerMessage::Ping;
-					sendPacket(packet.GetBufferPtr(), packet.GetSize(), clientProxy.address);
+					sendPacket(packet, clientProxy.address);
 				}
 
 				if (Time.time - clientProxy.lastPacketReceivedTime >= DISCONNECT_TIMEOUT_SECONDS)
@@ -247,11 +247,11 @@ void ModuleNetworkingServer::onUpdate()
 				}
 
 				// TODO(you): World state replication lab session
-				OutputMemoryStream packet;
-				packet << PROTOCOL_ID;
-				packet << ServerMessage::Replication;
+				if (clientProxy.secondsSinceLastReplication >= REPLICATION_INTERVAL_SECONDS) {
+					OutputMemoryStream packet;
+					packet << PROTOCOL_ID;
+					packet << ServerMessage::Replication;
 
-				if (clientProxy.secondsSinceLastReplication >= replicationDeliveryIntervalSeconds) {
 					packet.Write(clientProxy.nextExpectedInputSequenceNumber);
 					clientProxy.m_replicationManager.write(packet);
 					sendPacket(packet, clientProxy.address);

@@ -7,21 +7,7 @@ void ReplicationManagerClient::read(const InputMemoryStream& packet)
 {
 	while (packet.RemainingByteCount() > 0)
 	{
-		/*
-	● Read the networkId
-	● Read the replicationAction
-	● If replicationAction is Create
-		○ Instantiate new object
-		○ Register it into the linking context
-		○ Deserialize its fields
-	● Else if replicationAction is Update
-		○ Get the object from the linking context
-		○ Deserialize its fields
-	● Else if replicationAction is Destroy
-		○ Get the object from the linking context
-		○ Unregister it from the linking context
-		○ Destroy it
-	*/
+	
 
 		uint32 networkID;
 		packet.Read(networkID);
@@ -128,16 +114,25 @@ void ReplicationManagerClient::deserialize(const InputMemoryStream& packet, Game
 		gameObject->animation->clip = App->modResources->explosionClip;*/
 
 	// Collider component
-	ColliderType type = ColliderType::None;
-	packet.Read(type);
-	if (gameObject->collider == nullptr) {
-		gameObject->collider = App->modCollision->addCollider(type, gameObject);
+	ColliderType c_type = ColliderType::None;
+	packet.Read(c_type);
+	if (gameObject->collider == nullptr) 
+	{
+		gameObject->collider = App->modCollision->addCollider(c_type, gameObject);
 	}
 	packet.Read(gameObject->collider->isTrigger);
-	//App->modBehaviour->addBehaviour()
-	// "Script" component
-	if (gameObject->behaviour == nullptr) {
-		switch (type) {
+
+	//Behaviour
+	/*BehaviourType b_type = BehaviourType::None;
+	packet.Read(b_type);
+	if (gameObject->behaviour == nullptr)
+	{
+		gameObject->behaviour = App->modBehaviour->addBehaviour(b_type, gameObject);
+	}*/
+
+	if (gameObject->behaviour == nullptr) 
+	{
+		switch (c_type) {
 		case ColliderType::Player: {
 			gameObject->behaviour = App->modBehaviour->addBehaviour(BehaviourType::Spaceship, gameObject);
 			break;
@@ -155,6 +150,7 @@ void ReplicationManagerClient::deserialize(const InputMemoryStream& packet, Game
 		}
 		gameObject->behaviour->gameObject = gameObject;
 	}
+
 
 	// Tag for custom usage
 	packet.Read(gameObject->tag);

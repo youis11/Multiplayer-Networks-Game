@@ -127,8 +127,6 @@ private:
 	// TODO(you): UDP virtual connection lab session
 	float secondsSinceLastPing = 0.0f;
 
-	float replicationDeliveryIntervalSeconds = 0.f;
-
 
 };
 
