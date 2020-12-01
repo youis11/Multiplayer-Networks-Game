@@ -19,6 +19,7 @@ void ReplicationManagerServer::create(uint32 networkId)
 
 void ReplicationManagerServer::update(uint32 networkId)
 {
+	//TODO: buscas els commands and canvies cap a update
 	m_replicationCommands.push_back(ReplicationCommand(ReplicationAction::Update, networkId));
 }
 
@@ -43,20 +44,21 @@ void ReplicationManagerServer::write(OutputMemoryStream& packet)
 			case ReplicationAction::Create: 
 			{
 				serialize(packet, gameObject);
+				// TODO: replication comment = NONE
 				break;
 			}
 			case ReplicationAction::Update: 
 			{
 				serialize(packet, gameObject);
+				// TODO: replication comment = NONE
 				break;
 			}
 			case ReplicationAction::Destroy:
 			{
+				// TODO: erase from vector
 				//App->modLinkingContext->unregisterNetworkGameObject(gameObject);
 				//Destroy(gameObject);
-				GameObject* gameObjects[100];
-				uint16 pls = 0;
-				App->modLinkingContext->getNetworkGameObjects(gameObjects, &pls);
+
 				break;
 			}
 			default: 
@@ -89,6 +91,7 @@ void ReplicationManagerServer::write(OutputMemoryStream& packet)
 		}*/
 	}
 
+	// TODO: Delete this
 	m_replicationCommands.clear();
 }
 
@@ -135,6 +138,7 @@ void ReplicationManagerServer::serialize(OutputMemoryStream& packet, GameObject*
 	}
 
 	//Behaviour
+	// TODO: si te behaviour llegir el type
 	//packet.Write(gameObject->behaviour->type());
 
 	// Tag for custom usage

@@ -5,14 +5,17 @@
 
 void ReplicationManagerClient::read(const InputMemoryStream& packet)
 {
-	while (packet.RemainingByteCount() > 0)
-	{
-	
 
+	while(packet.RemainingByteCount() > 0)
+	{
+		
+		LOG("%i", packet.RemainingByteCount());
 		uint32 networkID;
 		packet.Read(networkID);
+
 		if (packet.RemainingByteCount() <= 0)
 			break;
+
 		ReplicationAction action;
 		packet.Read(action);
 		switch (action) {
@@ -30,9 +33,10 @@ void ReplicationManagerClient::read(const InputMemoryStream& packet)
 		}
 
 		case ReplicationAction::Destroy: {
-			GameObject* gameObject = App->modLinkingContext->getNetworkGameObject(networkID);
-			App->modLinkingContext->unregisterNetworkGameObject(gameObject);
-			Destroy(gameObject);
+			// TODO: uncomment
+			//GameObject* gameObject = App->modLinkingContext->getNetworkGameObject(networkID);
+			//App->modLinkingContext->unregisterNetworkGameObject(gameObject);
+			//Destroy(gameObject);
 			break;
 		}
 
@@ -40,7 +44,11 @@ void ReplicationManagerClient::read(const InputMemoryStream& packet)
 			break;
 		}
 		}
+
+		
 	}
+
+
 	
 }
 
@@ -115,6 +123,7 @@ void ReplicationManagerClient::deserialize(const InputMemoryStream& packet, Game
 
 	// Collider component
 	ColliderType c_type = ColliderType::None;
+	// TODO: si no he llegit res perque era nullptr, no pillara res
 	packet.Read(c_type);
 	if (gameObject->collider == nullptr) 
 	{
@@ -130,6 +139,8 @@ void ReplicationManagerClient::deserialize(const InputMemoryStream& packet, Game
 		gameObject->behaviour = App->modBehaviour->addBehaviour(b_type, gameObject);
 	}*/
 
+
+	//TODO: treure lo del collider y utilitzar el type() 
 	if (gameObject->behaviour == nullptr) 
 	{
 		switch (c_type) {
