@@ -1,12 +1,13 @@
 #pragma once
-
+#include <map>
+#include "MemoryStream.h"
 // TODO(you): World state replication lab session
 
 class ReplicationManagerServer
 {
 public:
-	ReplicationManagerServer();
-	~ReplicationManagerServer();
+	/*ReplicationManagerServer();
+	~ReplicationManagerServer();*/
 
 	void create(uint32 networkId);
 	void update(uint32 networkId);
@@ -17,5 +18,6 @@ public:
 
 private:
 	std::vector<ReplicationCommand> m_replicationCommands;
+	std::map<uint32, ReplicationAction> actions;
 
 };

@@ -5,6 +5,13 @@
 
 void ReplicationManagerClient::read(const InputMemoryStream& packet)
 {
+	size_t size;
+	packet.Read(size);
+
+	for (int i = 0; i < size; ++i) {
+		//TODO: Fill this well coded
+	}
+
 
 	while(packet.RemainingByteCount() > 0)
 	{

@@ -11,9 +11,9 @@ public:
 	ReplicationAction action;
 	uint32 networkId;
 
-public:
-	ReplicationCommand(ReplicationAction action, uint32 networkID)
-		: action(action)
-		, networkId(networkID)
-	{}
+//public:
+//	ReplicationCommand(ReplicationAction action, uint32 networkID)
+//		: action(action)
+//		, networkId(networkID)
+//	{}
 };

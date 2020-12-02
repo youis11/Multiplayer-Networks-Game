@@ -198,9 +198,8 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 
 		// TODO(you): UDP virtual connection lab session
 		else if (message == ClientMessage::Ping) {
-			if (proxy != nullptr) {
-				proxy->lastPacketReceivedTime = Time.time;
-			}
+			proxy->lastPacketReceivedTime = Time.time;
+			
 		}
 	}
 }

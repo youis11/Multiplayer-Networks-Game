@@ -3,35 +3,37 @@
 
 // TODO(you): World state replication lab session
 
-ReplicationManagerServer::ReplicationManagerServer()
-	: m_replicationCommands()
-{
-}
-
-ReplicationManagerServer::~ReplicationManagerServer()
-{
-}
 
 void ReplicationManagerServer::create(uint32 networkId)
 {
-	m_replicationCommands.push_back(ReplicationCommand(ReplicationAction::Create, networkId));
+	//m_replicationCommands.push_back(ReplicationCommand(ReplicationAction::Create, networkId));
+	actions.emplace(networkId, ReplicationAction::Create);
 }
 
 void ReplicationManagerServer::update(uint32 networkId)
 {
 	//TODO: buscas els commands and canvies cap a update
-	m_replicationCommands.push_back(ReplicationCommand(ReplicationAction::Update, networkId));
+	//m_replicationCommands.push_back(ReplicationCommand(ReplicationAction::Update, networkId));
+	actions[networkId] = ReplicationAction::Update;
 }
 
 void ReplicationManagerServer::destroy(uint32 networkId)
 {
-	m_replicationCommands.push_back(ReplicationCommand(ReplicationAction::Destroy, networkId));
+	//m_replicationCommands.push_back(ReplicationCommand(ReplicationAction::Destroy, networkId));
+	actions[networkId] = ReplicationAction::Destroy;
 }
 
 void ReplicationManagerServer::write(OutputMemoryStream& packet)
 {
+	// Filter
+	packet.Write(PROTOCOL_ID);
+	packet.Write(ClientMessage::Input);
+
+	// Size from byteCount to read
+	packet.Write(actions.size()); 
 
 
+	//TODO: Rewrite this but well coded
 	for (const auto& replicationCommand : m_replicationCommands) {
 
 		uint32 networkID = replicationCommand.networkId;
