@@ -1,4 +1,5 @@
 #include "Networks.h"
+#include "ModuleResources.h"
 
 
 #if defined(USE_TASK_MANAGER)
@@ -56,6 +57,26 @@ void ModuleResources::loadTextureAsync(const char * filename, Texture **textureP
 	task->texture = texturePtrAddress;
 
 	App->modTaskManager->scheduleTask(task, this);
+}
+
+Texture* ModuleResources::FindByTextureName(std::string textureFilename)
+{
+	if (textureFilename == "space_background.jpg")
+		return space;
+	else if (textureFilename == "asteroid1.png") 
+		return asteroid1;
+	else if (textureFilename == "asteroid2.png") 
+		return asteroid2;
+	else if (textureFilename == "spacecraft1.png") 
+		return spacecraft1;
+	else if (textureFilename == "spacecraft2.png") 
+		return spacecraft2;
+	else if (textureFilename == "spacecraft3.png") 
+		return spacecraft3;
+	else if (textureFilename == "laser.png") 
+		return laser;
+	else if (textureFilename == "explosion1.png") 
+		return explosion1;
 }
 
 void ModuleResources::onTaskFinished(Task * task)

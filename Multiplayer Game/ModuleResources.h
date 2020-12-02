@@ -25,6 +25,8 @@ public:
 
 	bool finishedLoading = false;
 
+	Texture* FindByTextureName(std::string textureFilename);
+
 private:
 
 	bool init() override;
@@ -50,6 +52,7 @@ private:
 	void onTaskFinished(Task *task) override;
 
 	void loadTextureAsync(const char *filename, Texture **texturePtrAddress, int id);
+
 
 #endif
 

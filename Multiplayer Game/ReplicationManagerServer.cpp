@@ -106,41 +106,52 @@ void ReplicationManagerServer::serialize(OutputMemoryStream& packet, GameObject*
 	packet.Write(gameObject->angle);
 
 	// Texture component
-	std::string textureFilename =  gameObject->sprite->texture->filename;
-	packet.Write(textureFilename);
-	packet.Write(gameObject->sprite->pivot.x);
-	packet.Write(gameObject->sprite->pivot.y);
-	packet.Write(gameObject->sprite->color.x);
-	packet.Write(gameObject->sprite->color.y);
-	packet.Write(gameObject->sprite->color.z);
-	packet.Write(gameObject->sprite->color.w);
-	packet.Write(gameObject->sprite->order);
+	if (gameObject->sprite != nullptr)
+	{
+		packet.Write(true); //Sprite exists
+		std::string textureFilename = gameObject->sprite->texture->filename;
+		packet.Write(textureFilename);
+		packet.Write(gameObject->sprite->order);
 
-	/*if (gameObject->sprite && gameObject->sprite->texture) {
-		packet.Write(gameObject->sprite->texture->id);
+		/*packet.Write(gameObject->sprite->pivot.x);
+		packet.Write(gameObject->sprite->pivot.y);
+		packet.Write(gameObject->sprite->color.x);
+		packet.Write(gameObject->sprite->color.y);
+		packet.Write(gameObject->sprite->color.z);
+		packet.Write(gameObject->sprite->color.w);*/
 	}
-	else {
-		packet.Write(-1);
-	}*/
-
+	else
+	{
+		packet.Write(false); //Sprite existsn't
+	}
+	
 	//packet.Write(gameObject->animation); //i guess it doesnt need any else
 
 	// Collider component
-	
 	if (gameObject->collider != nullptr)
 	{
+		packet.Write(true); //Collider exists
 		packet.Write(gameObject->collider->type);
 		packet.Write(gameObject->collider->isTrigger);
 	}
 	else
 	{
-		ASSERT(false, "Collider nullpter");
+		packet.Write(false); //Collider existsn't
 	}
 
 	//Behaviour
 	// TODO: si te behaviour llegir el type
-	//packet.Write(gameObject->behaviour->type());
+	if (gameObject->behaviour != nullptr)
+	{
+		packet.Write(true); //Behaviour exists
+		packet.Write(gameObject->behaviour->type());
+
+	}
+	else
+	{
+		packet.Write(false); //Behaviour existsn't
+	}
 
 	// Tag for custom usage
-	packet.Write(gameObject->tag);
+	//packet.Write(gameObject->tag);
 }
