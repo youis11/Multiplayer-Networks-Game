@@ -141,9 +141,6 @@ void ModuleNetworkingClient::onPacketReceived(const InputMemoryStream &packet, c
 		else if (message == ServerMessage::Replication)
 		{
 			//is that all?
-			UINT32 recvNextExpectedInputSequenceNumber;
-			packet.Read(recvNextExpectedInputSequenceNumber);
-			inputDataFront = recvNextExpectedInputSequenceNumber;
 			m_replicationManager.read(packet);
 		}
 	}

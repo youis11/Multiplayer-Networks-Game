@@ -251,7 +251,6 @@ void ModuleNetworkingServer::onUpdate()
 					packet << PROTOCOL_ID;
 					packet << ServerMessage::Replication;
 
-					packet.Write(clientProxy.nextExpectedInputSequenceNumber);
 					clientProxy.m_replicationManager.write(packet);
 					sendPacket(packet, clientProxy.address);
 
@@ -276,13 +275,6 @@ void ModuleNetworkingServer::onConnectionReset(const sockaddr_in & fromAddress)
 
 	if (proxy)
 	{
-		for (int i = 0; i < MAX_CLIENTS; ++i) {
-			if (clientProxies[i].connected && proxy->clientId != clientProxies[i].clientId) {
-				// TODO(jesus): Notify this proxy's replication manager about the destruction of this player's game object
-				clientProxies[i].m_replicationManager.destroy(proxy->gameObject->networkId);
-			}
-		}
-
 		// Clear the client proxy
 		destroyClientProxy(proxy);
 	}

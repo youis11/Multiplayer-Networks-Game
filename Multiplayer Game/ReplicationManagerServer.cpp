@@ -7,98 +7,66 @@
 void ReplicationManagerServer::create(uint32 networkId)
 {
 	//m_replicationCommands.push_back(ReplicationCommand(ReplicationAction::Create, networkId));
-	actions.emplace(networkId, ReplicationAction::Create);
+	actions[networkId].action = ReplicationAction::Create;
+	actions[networkId].networkId = networkId;
 }
 
 void ReplicationManagerServer::update(uint32 networkId)
 {
 	//TODO: buscas els commands and canvies cap a update
 	//m_replicationCommands.push_back(ReplicationCommand(ReplicationAction::Update, networkId));
-	actions[networkId] = ReplicationAction::Update;
+	if (actions[networkId].action == ReplicationAction::Create || actions[networkId].action == ReplicationAction::Destroy)
+		return;
+
+	actions[networkId].action = ReplicationAction::Update;
 }
 
 void ReplicationManagerServer::destroy(uint32 networkId)
 {
 	//m_replicationCommands.push_back(ReplicationCommand(ReplicationAction::Destroy, networkId));
-	actions[networkId] = ReplicationAction::Destroy;
+	actions[networkId].action = ReplicationAction::Destroy;
 }
 
 void ReplicationManagerServer::write(OutputMemoryStream& packet)
 {
-	// Filter
-	packet.Write(PROTOCOL_ID);
-	packet.Write(ClientMessage::Input);
-
-	// Size from byteCount to read
-	packet.Write(actions.size()); 
-
-
 	//TODO: Rewrite this but well coded
-	for (const auto& replicationCommand : m_replicationCommands) {
+	for (auto i = actions.begin(); i != actions.end(); ++i) {
 
-		uint32 networkID = replicationCommand.networkId;
-		ReplicationAction action = replicationCommand.action;
-		packet.Write(networkID);
-		packet.Write(action);
+		packet.Write(i->second.networkId);
+		packet.Write(i->second.action);
 
-		GameObject* gameObject = App->modLinkingContext->getNetworkGameObject(networkID);
-		switch (action) {
-			case ReplicationAction::Create: 
-			{
-				serialize(packet, gameObject);
-				// TODO: replication comment = NONE
-				break;
-			}
-			case ReplicationAction::Update: 
-			{
-				serialize(packet, gameObject);
-				// TODO: replication comment = NONE
-				break;
-			}
-			case ReplicationAction::Destroy:
-			{
-				// TODO: erase from vector
-				//App->modLinkingContext->unregisterNetworkGameObject(gameObject);
-				//Destroy(gameObject);
-
-				break;
-			}
-			default: 
-			{
-				break;
-			}
+		switch (i->second.action)
+		{
+		case ReplicationAction::None:{
+			break;
 		}
-		/*switch (action) {
-			case ReplicationAction::Create: {
-				case ReplicationAction::Update: {
-					if (gameObject == nullptr) {
-						continue;
-					}
-					packet.Write(networkID);
-					packet.Write(action);
-					serialize(packet, gameObject);
-					break;
-				}
 
-				case ReplicationAction::Destroy: {
-					packet.Write(networkID);
-					packet.Write(action);
-					break;
-				}
+		case ReplicationAction::Create:	{
+			GameObject* gameObject = App->modLinkingContext->getNetworkGameObject(i->second.networkId);
+			serializeCreate(packet, gameObject);
+			break;
+		}
+		
+		case ReplicationAction::Update:{
+			GameObject* gameObject = App->modLinkingContext->getNetworkGameObject(i->second.networkId);
+			serializeUpdate(packet, gameObject);
+		}
+		break;
+		case ReplicationAction::Destroy:{
+			break;
+		}
 
-				default: {
-					break;
-				}
-			}
-		}*/
+		default:
+			break;
+		}
+
+		//This is to clear the action
+		i->second.action = ReplicationAction::None;
 	}
-
-	// TODO: Delete this
-	m_replicationCommands.clear();
 }
 
 
-void ReplicationManagerServer::serialize(OutputMemoryStream& packet, GameObject* gameObject) const
+void ReplicationManagerServer::serializeCreate(OutputMemoryStream& packet, GameObject* gameObject) const
 {
 	// Transform component
 	packet.Write(gameObject->position.x);
@@ -111,6 +79,8 @@ void ReplicationManagerServer::serialize(OutputMemoryStream& packet, GameObject*
 	if (gameObject->sprite != nullptr)
 	{
 		packet.Write(true); //Sprite exists
+
+		//TODO write texture packet (I think its done)
 		std::string textureFilename = gameObject->sprite->texture->filename;
 		packet.Write(textureFilename);
 		packet.Write(gameObject->sprite->order);
@@ -147,7 +117,6 @@ void ReplicationManagerServer::serialize(OutputMemoryStream& packet, GameObject*
 	{
 		packet.Write(true); //Behaviour exists
 		packet.Write(gameObject->behaviour->type());
-
 	}
 	else
 	{
@@ -156,4 +125,13 @@ void ReplicationManagerServer::serialize(OutputMemoryStream& packet, GameObject*
 
 	// Tag for custom usage
 	//packet.Write(gameObject->tag);
+}
+
+void ReplicationManagerServer::serializeUpdate(OutputMemoryStream& packet, GameObject* gameObject) const
+{
+	// Transform component
+	packet.Write(gameObject->position.x);
+	packet.Write(gameObject->position.y);
+	packet.Write(gameObject->angle);
+
 }

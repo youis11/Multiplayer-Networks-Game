@@ -14,10 +14,11 @@ public:
 	void destroy(uint32 networkId);
 
 	void write(OutputMemoryStream& packet);
-	void serialize(OutputMemoryStream& packet, GameObject* gameObject) const;
+	void serializeCreate(OutputMemoryStream& packet, GameObject* gameObject) const;
+	void serializeUpdate(OutputMemoryStream& packet, GameObject* gameObject) const;
 
 private:
-	std::vector<ReplicationCommand> m_replicationCommands;
-	std::map<uint32, ReplicationAction> actions;
+	//std::vector<ReplicationCommand> m_replicationCommands;
+	std::map<uint32, ReplicationCommand> actions;
 
 };

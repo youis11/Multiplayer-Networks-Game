@@ -5,45 +5,45 @@
 
 void ReplicationManagerClient::read(const InputMemoryStream& packet)
 {
-	size_t size;
-	packet.Read(size);
-
-	for (int i = 0; i < size; ++i) {
-		//TODO: Fill this well coded
-	}
-
-
 	while(packet.RemainingByteCount() > 0)
 	{
 		
-		LOG("%i", packet.RemainingByteCount());
 		uint32 networkID;
 		packet.Read(networkID);
-
-		if (packet.RemainingByteCount() <= 0)
-			break;
 
 		ReplicationAction action;
 		packet.Read(action);
 		switch (action) {
+		case ReplicationAction::None:{
+			break;
+		}
 		case ReplicationAction::Create: {
 			GameObject* gameObject = App->modGameObject->Instantiate();
-			App->modLinkingContext->registerNetworkGameObjectWithNetworkId(gameObject, networkID);
-			deserialize(packet, gameObject);
+			if (App->modLinkingContext->getNetworkGameObject(networkID) != nullptr)
+			{
+				deserializeCreate(packet, gameObject);
+				App->modGameObject->Destroy(gameObject);
+			}
+			else
+			{
+				App->modLinkingContext->registerNetworkGameObjectWithNetworkId(gameObject, networkID);
+				deserializeCreate(packet, gameObject);
+
+			}
 			break;
 		}
 
 		case ReplicationAction::Update: {
 			GameObject* gameObject = App->modLinkingContext->getNetworkGameObject(networkID);
-			deserialize(packet, gameObject);
+			deserializeUpdate(packet, gameObject);
 			break;
 		}
 
 		case ReplicationAction::Destroy: {
 			// TODO: uncomment
-			//GameObject* gameObject = App->modLinkingContext->getNetworkGameObject(networkID);
-			//App->modLinkingContext->unregisterNetworkGameObject(gameObject);
-			//Destroy(gameObject);
+			GameObject* gameObject = App->modLinkingContext->getNetworkGameObject(networkID);
+			App->modLinkingContext->unregisterNetworkGameObject(gameObject);
+			App->modGameObject->Destroy(gameObject);
 			break;
 		}
 
@@ -59,7 +59,7 @@ void ReplicationManagerClient::read(const InputMemoryStream& packet)
 	
 }
 
-void ReplicationManagerClient::deserialize(const InputMemoryStream& packet, GameObject *gameObject)
+void ReplicationManagerClient::deserializeCreate(const InputMemoryStream& packet, GameObject *gameObject)
 {
 
 	// Transform component
@@ -168,4 +168,13 @@ void ReplicationManagerClient::deserialize(const InputMemoryStream& packet, Game
 
 	// Tag for custom usage
 	//packet.Read(gameObject->tag);
+}
+
+void ReplicationManagerClient::deserializeUpdate(const InputMemoryStream& packet, GameObject* gameObject)
+{
+
+	// Transform component
+	packet.Read(gameObject->position.x);
+	packet.Read(gameObject->position.y);
+	packet.Read(gameObject->angle);
 }
