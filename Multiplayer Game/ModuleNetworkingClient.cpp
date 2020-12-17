@@ -196,7 +196,7 @@ void ModuleNetworkingClient::onUpdate()
 			packet << ClientMessage::Input;
 
 			// TODO(you): Reliability on top of UDP lab session
-
+			// TODO(marc): when receiving notifications about input data processing from the server, update inputDataFront to avoid sending already processed input data
 			for (uint32 i = inputDataFront; i < inputDataBack; ++i)
 			{
 				InputPacketData &inputPacketData = inputData[i % ArrayCount(inputData)];
@@ -207,7 +207,8 @@ void ModuleNetworkingClient::onUpdate()
 			}
 
 			// Clear the queue
-			inputDataFront = inputDataBack;
+			inputDataFront = inputDataBack; // By deleting this, we allow to send repeated packets until receiving the last input packet processed by the server
+
 
 			sendPacket(packet, serverAddress);
 		}

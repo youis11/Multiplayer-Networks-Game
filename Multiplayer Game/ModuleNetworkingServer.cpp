@@ -174,6 +174,7 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 			if (proxy != nullptr && IsValid(proxy->gameObject))
 			{
 				// TODO(you): Reliability on top of UDP lab session
+				// TODO(marc): send notifications about the last processed input data
 
 				// Read input data
 				while (packet.RemainingByteCount() > 0)
