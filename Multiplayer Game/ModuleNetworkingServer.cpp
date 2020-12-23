@@ -119,13 +119,14 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 					proxy->clientId = nextClientId++;
 					//proxy->secondsSinceLastReplication = replicationDeliveryIntervalSeconds;
 
-					// Create new network object PLAYER
-					vec2 initialPosition = 500.0f * vec2{ Random.next() - 0.5f, Random.next() - 0.5f};
-					float initialAngle = 360.0f * Random.next();
-					proxy->gameObject = spawnPlayer(spaceshipType, initialPosition, initialAngle);
+					
 
 					// Create new network object SCORE
 					proxy->gameObject = spawnScore(spaceshipType, { 0,0 });
+					// Create new network object PLAYER
+					vec2 initialPosition = 500.0f * vec2{ Random.next() - 0.5f, Random.next() - 0.5f };
+					float initialAngle = 360.0f * Random.next();
+					proxy->gameObject = spawnPlayer(spaceshipType, initialPosition, initialAngle);
 				}
 				else
 				{
@@ -373,22 +374,14 @@ GameObject * ModuleNetworkingServer::spawnPlayer(uint8 spaceshipType, vec2 initi
 	// Create sprite
 	gameObject->sprite = App->modRender->addSprite(gameObject);
 	gameObject->sprite->order = 5;
-	if (spaceshipType == 0) {
-		gameObject->sprite->texture = App->modResources->spacecraft1;
-	}
-	else if (spaceshipType == 1) {
-		gameObject->sprite->texture = App->modResources->spacecraft2;
-	}
-	else {
-		gameObject->sprite->texture = App->modResources->spacecraft3;
-	}
+	gameObject->sprite->texture = App->modResources->spacecraft1;
 
 	// Create collider
 	gameObject->collider = App->modCollision->addCollider(ColliderType::Player, gameObject);
 	gameObject->collider->isTrigger = true; // NOTE(jesus): This object will receive onCollisionTriggered events
 
 	// Create behaviour
-	Spaceship * spaceshipBehaviour = App->modBehaviour->addSpaceship(gameObject);
+	Spaceship* spaceshipBehaviour = App->modBehaviour->addSpaceship(gameObject, spaceshipType);
 	gameObject->behaviour = spaceshipBehaviour;
 	gameObject->behaviour->isServer = true;
 

@@ -1,6 +1,6 @@
 #include "Networks.h"
 #include "Behaviours.h"
-
+#include <string>
 
 
 void Laser::start()
@@ -40,13 +40,13 @@ void Spaceship::start()
 	gameObject->tag = (uint32)(Random.next() * UINT_MAX);
 	gameObject->angle = 0;
 	
-	if (player_waiting)
+	/*if (player_waiting)
 		playerNum = PlayerNum::PLAYER2;
 	else
 	{
 		player_waiting = true;
 		playerNum = PlayerNum::PLAYER1;
-	}
+	}*/
 
 	switch (playerNum)
 	{
@@ -61,6 +61,8 @@ void Spaceship::start()
 	default:
 		break;
 	}
+	if (isServer)
+		NetworkUpdate(gameObject);
 	/*lifebar = Instantiate();
 	lifebar->sprite = App->modRender->addSprite(lifebar);
 	lifebar->sprite->pivot = vec2{ 0.0f, 0.5f };
@@ -71,7 +73,10 @@ void Spaceship::onInput(const InputController &input)
 {
 	if (input.verticalAxis != 0.0f)
 	{
-		const float speed = 500.0f;
+		float speed = 700.0f;
+		if (input.actionDown == ButtonState::Pressed || input.actionUp == ButtonState::Pressed || input.actionRight == ButtonState::Pressed || input.actionLeft == ButtonState::Pressed)
+			speed *= 4.0f;
+
 		float max_high = 265;
 		float min_high = -265;
 		if (gameObject->position.y >= min_high && gameObject->position.y <= max_high)
@@ -85,61 +90,55 @@ void Spaceship::onInput(const InputController &input)
 			gameObject->position.y = min_high;
 		if (gameObject->position.y > max_high)
 			gameObject->position.y = max_high;
-
-
-		
 	}
-	
 
+	/*if (input.horizontalAxis != 0.0f)
+	{
+		const float rotateSpeed = 180.0f;
+		gameObject->angle += input.horizontalAxis * rotateSpeed * Time.deltaTime;
 
+		if (isServer)
+		{
+			NetworkUpdate(gameObject);
+		}
+	}
 
-	//if (input.horizontalAxis != 0.0f)
-	//{
-	//	const float rotateSpeed = 180.0f;
-	//	gameObject->angle += input.horizontalAxis * rotateSpeed * Time.deltaTime;
+	if (input.actionDown == ButtonState::Pressed)
+	{
+		const float advanceSpeed = 200.0f;
+		gameObject->position += vec2FromDegrees(gameObject->angle) * advanceSpeed * Time.deltaTime;
 
-	//	if (isServer)
-	//	{
-	//		NetworkUpdate(gameObject);
-	//	}
-	//}
+		if (isServer)
+		{
+			NetworkUpdate(gameObject);
+		}
+	}
 
-	//if (input.actionDown == ButtonState::Pressed)
-	//{
-	//	const float advanceSpeed = 200.0f;
-	//	gameObject->position += vec2FromDegrees(gameObject->angle) * advanceSpeed * Time.deltaTime;
+	if (input.actionLeft == ButtonState::Press)
+	{
+		if (isServer)
+		{
+			GameObject *laser = NetworkInstantiate();
 
-	//	if (isServer)
-	//	{
-	//		NetworkUpdate(gameObject);
-	//	}
-	//}
+			laser->position = gameObject->position;
+			laser->angle = gameObject->angle;
+			laser->size = { 20, 60 };
 
-	//if (input.actionLeft == ButtonState::Press)
-	//{
-	//	if (isServer)
-	//	{
-	//		GameObject *laser = NetworkInstantiate();
+			laser->sprite = App->modRender->addSprite(laser);
+			laser->sprite->order = 3;
+			laser->sprite->texture = App->modResources->laser;
 
-	//		laser->position = gameObject->position;
-	//		laser->angle = gameObject->angle;
-	//		laser->size = { 20, 60 };
+			Laser *laserBehaviour = App->modBehaviour->addLaser(laser);
+			laserBehaviour->isServer = isServer;
 
-	//		laser->sprite = App->modRender->addSprite(laser);
-	//		laser->sprite->order = 3;
-	//		laser->sprite->texture = App->modResources->laser;
+			laser->tag = gameObject->tag;
 
-	//		Laser *laserBehaviour = App->modBehaviour->addLaser(laser);
-	//		laserBehaviour->isServer = isServer;
-
-	//		laser->tag = gameObject->tag;
-
-	//		const float neutralTimeSeconds = 0.1f;
-	//		if (/*GetSecondsLived() > neutralTimeSeconds && */laser->collider == nullptr) {
-	//			laser->collider = App->modCollision->addCollider(ColliderType::Laser, gameObject);
-	//		}
-	//	}
-	//}
+			const float neutralTimeSeconds = 0.1f;
+			if (/*GetSecondsLived() > neutralTimeSeconds && laser->collider == nullptr) {
+				laser->collider = App->modCollision->addCollider(ColliderType::Laser, gameObject);
+			}
+		}
+	}*/
 }
 
 void Spaceship::update()
@@ -168,49 +167,49 @@ void Spaceship::onCollisionTriggered(Collider &c1, Collider &c2)
 	{
 		//TODO(marc): change direction ball behaviour, angle
 	}
-	//if (c2.type == ColliderType::Laser && c2.gameObject->tag != gameObject->tag)
-	//{
-	//	if (isServer)
-	//	{
-	//		NetworkDestroy(c2.gameObject); // Destroy the laser
-	//	
-	//		if (hitPoints > 0)
-	//		{
-	//			hitPoints--;
-	//			NetworkUpdate(gameObject);
-	//		}
+	/*if (c2.type == ColliderType::Laser && c2.gameObject->tag != gameObject->tag)
+	{
+		if (isServer)
+		{
+			NetworkDestroy(c2.gameObject); // Destroy the laser
+		
+			if (hitPoints > 0)
+			{
+				hitPoints--;
+				NetworkUpdate(gameObject);
+			}
 
-	//		float size = 30 + 50.0f * Random.next();
-	//		vec2 position = gameObject->position + 50.0f * vec2{Random.next() - 0.5f, Random.next() - 0.5f};
+			float size = 30 + 50.0f * Random.next();
+			vec2 position = gameObject->position + 50.0f * vec2{Random.next() - 0.5f, Random.next() - 0.5f};
 
-	//		if (hitPoints <= 0)
-	//		{
-	//			// Centered big explosion
-	//			size = 250.0f + 100.0f * Random.next();
-	//			position = gameObject->position;
+			if (hitPoints <= 0)
+			{
+				// Centered big explosion
+				size = 250.0f + 100.0f * Random.next();
+				position = gameObject->position;
 
-	//			NetworkDestroy(gameObject);
-	//		}
+				NetworkDestroy(gameObject);
+			}
 
-	//		GameObject *explosion = NetworkInstantiate();
-	//		explosion->position = position;
-	//		explosion->size = vec2{ size, size };
-	//		explosion->angle = 365.0f * Random.next();
+			GameObject *explosion = NetworkInstantiate();
+			explosion->position = position;
+			explosion->size = vec2{ size, size };
+			explosion->angle = 365.0f * Random.next();
 
-	//		explosion->sprite = App->modRender->addSprite(explosion);
-	//		explosion->sprite->texture = App->modResources->explosion1;
-	//		explosion->sprite->order = 100;
+			explosion->sprite = App->modRender->addSprite(explosion);
+			explosion->sprite->texture = App->modResources->explosion1;
+			explosion->sprite->order = 100;
 
-	//		explosion->animation = App->modRender->addAnimation(explosion);
-	//		explosion->animation->clip = App->modResources->explosionClip;
+			explosion->animation = App->modRender->addAnimation(explosion);
+			explosion->animation->clip = App->modResources->explosionClip;
 
-	//		NetworkDestroy(explosion, 2.0f);
+			NetworkDestroy(explosion, 2.0f);
 
-	//		// NOTE(jesus): Only played in the server right now...
-	//		// You need to somehow make this happen in clients
-	//		App->modSound->playAudioClip(App->modResources->audioClipExplosion);
-	//	}
-	//}
+			// NOTE(jesus): Only played in the server right now...
+			// You need to somehow make this happen in clients
+			App->modSound->playAudioClip(App->modResources->audioClipExplosion);
+		}
+	}*/
 }
 
 void Spaceship::write(OutputMemoryStream & packet)
@@ -225,7 +224,25 @@ void Spaceship::read(const InputMemoryStream & packet)
 
 void Score::start()
 {
+	gameObject->tag = (uint32)(Random.next() * UINT_MAX);
+	gameObject->angle = 0;
+
+	gameObject->position = { 200,-250 };
+
 }
+
+//void Score::onInput(const InputController& input)
+//{
+//	if (input.actionDown == ButtonState::Press)
+//	{
+//		score_value++;
+//		if (score_value > 9)
+//			score_value = 0;
+//		gameObject->sprite->texture = App->modResources->FindByTextureName(std::to_string(score_value) + ".png");
+//		if (isServer)
+//			NetworkUpdate(gameObject);
+//	}
+//}
 
 void Score::update()
 {

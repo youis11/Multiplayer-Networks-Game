@@ -8,30 +8,36 @@ bool ModuleBehaviour::update()
 		handleBehaviourLifeCycle(&behaviour);
 	}
 	
-	for (Laser &behaviour : lasers)
+	for (Score &behaviour : scores)
 	{
 		handleBehaviourLifeCycle(&behaviour);
 	}
+	
+	/*for (Laser &behaviour : lasers)
+	{
+		handleBehaviourLifeCycle(&behaviour);
+	}*/
 
 	return true;
 }
 
-Behaviour *ModuleBehaviour::addBehaviour(BehaviourType behaviourType, GameObject *parentGameObject)
+Behaviour *ModuleBehaviour::addBehaviour(BehaviourType behaviourType, GameObject *parentGameObject, uint32 space_ship_type)
 {
 	switch (behaviourType)
 	{
-	case BehaviourType::Spaceship:
-		return addSpaceship(parentGameObject);
-	case BehaviourType::Laser:
-		return addLaser(parentGameObject);
+	
+	/*case BehaviourType::Laser:
+		return addLaser(parentGameObject);*/
 	case BehaviourType::Score:
 		return addScore(parentGameObject);
 	default:
+	case BehaviourType::Spaceship:
+		return addSpaceship(parentGameObject, space_ship_type);
 		return nullptr;
 	}
 }
 
-Spaceship *ModuleBehaviour::addSpaceship(GameObject *parentGameObject)
+Spaceship *ModuleBehaviour::addSpaceship(GameObject *parentGameObject, uint32 type)
 {
 	for (Spaceship &behaviour : spaceships)
 	{
@@ -40,6 +46,12 @@ Spaceship *ModuleBehaviour::addSpaceship(GameObject *parentGameObject)
 			behaviour = {};
 			behaviour.gameObject = parentGameObject;
 			parentGameObject->behaviour = &behaviour;
+
+			if (type == 0)
+				behaviour.playerNum = behaviour.PlayerNum::PLAYER1;
+			else
+				behaviour.playerNum = behaviour.PlayerNum::PLAYER2;
+
 			return &behaviour;
 		}
 	}

@@ -116,7 +116,20 @@ void ReplicationManagerServer::serializeCreate(OutputMemoryStream& packet, GameO
 	if (gameObject->behaviour != nullptr)
 	{
 		packet.Write(true); //Behaviour exists
-		packet.Write(gameObject->behaviour->type());
+		BehaviourType b_type = gameObject->behaviour->type();
+		packet.Write(b_type);
+
+		if (b_type == BehaviourType::Spaceship)
+		{
+			uint32 type = 0;
+			packet.Write(type);
+		}
+		if (b_type == BehaviourType::Score)
+		{
+			uint32 type = 0;
+			packet.Write(type);
+		}
+
 	}
 	else
 	{
