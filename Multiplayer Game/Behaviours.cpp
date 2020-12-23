@@ -257,6 +257,21 @@ void Score::start()
 
 void Score::update()
 {
+	if (score_value_player1 >= 10 || score_value_player2 >= 10)
+	{
+		score_value_player1 = 0;
+		score_value_player2 = 0;
+		for (Score& behaviour : App->modBehaviour->scores)
+		{
+			if (scorePlayerNum == ScorePlayerNum::SCORE_PLAYER2 || scorePlayerNum == ScorePlayerNum::SCORE_PLAYER1)
+			{
+				//Change to new Texture
+				gameObject->sprite->texture = NextScoreTexture(gameObject->sprite->texture, 9);
+				NetworkUpdate(gameObject);
+			}
+		}
+
+	}
 }
 
 void Score::destroy()
@@ -274,7 +289,9 @@ void Score::read(const InputMemoryStream& packet)
 Texture* Score::NextScoreTexture(Texture* texture, int my_score)
 {
 	std::string next_t_name = texture->filename;
-	next_t_name.replace(0, 1, std::to_string(++my_score));
+	my_score++;
+	if (my_score >= 10) my_score = 0;
+	next_t_name.replace(0, 1, std::to_string(my_score));
 	Texture* next_t = App->modResources->FindByTextureName(next_t_name);
 	return next_t;
 }
@@ -304,7 +321,7 @@ void Ball::update()
 
 		extraSpeedTime += Time.deltaTime;
 		if (extraSpeedTime >= 4) {
-			extraSpeed += 20;
+			extraSpeed += 40;
 			extraSpeedTime = 0;
 		}
 
@@ -330,7 +347,7 @@ void Ball::update()
 			restart_timer += Time.deltaTime;
 	}
 	
-
+	
 	if (isServer)
 		NetworkUpdate(gameObject);
 
@@ -372,7 +389,7 @@ void Ball::onCollisionTriggered(Collider& c1, Collider& c2)
 					{
 						//Change to new Texture
 						behaviour.gameObject->sprite->texture = behaviour.NextScoreTexture(behaviour.gameObject->sprite->texture, behaviour.score_value_player2);
-						behaviour.score_value_player2++;
+						behaviour.score_value_player2++;					
 						ResetBall(2);
 						NetworkUpdate(behaviour.gameObject);
 						break;
