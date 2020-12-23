@@ -81,6 +81,8 @@ public:
 
 	GameObject * spawnPlayer(uint8 spaceshipType, vec2 initialPosition, float initialAngle);
 	GameObject * spawnLaser(uint8 spaceshipType, vec2 initialPosition, float initialAngle);
+	GameObject * spawnBall(vec2 initialPosition, float initialAngle);
+	GameObject * spawnScore(uint8 spaceshipType, vec2 initialPosition);
 
 private:
 

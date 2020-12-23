@@ -143,7 +143,12 @@ void ModuleNetworkingClient::onPacketReceived(const InputMemoryStream &packet, c
 			//is that all?
 			m_replicationManager.read(packet);
 		}
+		else if (message == ServerMessage::Reliability)
+		{
+			packet >> inputDataFront;
+		}
 	}
+
 }
 
 void ModuleNetworkingClient::onUpdate()
@@ -207,7 +212,7 @@ void ModuleNetworkingClient::onUpdate()
 			}
 
 			// Clear the queue
-			inputDataFront = inputDataBack; // By deleting this, we allow to send repeated packets until receiving the last input packet processed by the server
+			//inputDataFront = inputDataBack; // By deleting this, we allow to send repeated packets until receiving the last input packet processed by the server
 
 
 			sendPacket(packet, serverAddress);
@@ -234,7 +239,7 @@ void ModuleNetworkingClient::onUpdate()
 		GameObject *playerGameObject = App->modLinkingContext->getNetworkGameObject(networkId);
 		if (playerGameObject != nullptr)
 		{
-			App->modRender->cameraPosition = playerGameObject->position;
+			//App->modRender->cameraPosition = playerGameObject->position;
 		}
 		else
 		{
