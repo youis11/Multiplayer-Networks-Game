@@ -400,22 +400,13 @@ GameObject* ModuleNetworkingServer::spawnScore(uint8 spaceshipType, vec2 initial
 	gameObject->sprite = App->modRender->addSprite(gameObject);
 	gameObject->sprite->order = 5;
 	gameObject->sprite->texture = App->modResources->score_0;
-	/*if (spaceshipType == 0) {
-		gameObject->sprite->texture = App->modResources->spacecraft1;
-	}
-	else if (spaceshipType == 1) {
-		gameObject->sprite->texture = App->modResources->spacecraft2;
-	}
-	else {
-		gameObject->sprite->texture = App->modResources->spacecraft3;
-	}*/
-
+	
 	// Create collider
 	//gameObject->collider = App->modCollision->addCollider(ColliderType::Player, gameObject);
 	//gameObject->collider->isTrigger = true; // NOTE(jesus): This object will receive onCollisionTriggered events
 
 	// Create behaviour
-	Score* scoreBehaviour = App->modBehaviour->addScore(gameObject);
+	Score* scoreBehaviour = App->modBehaviour->addScore(gameObject, spaceshipType);
 	gameObject->behaviour = scoreBehaviour;
 	gameObject->behaviour->isServer = true;
 

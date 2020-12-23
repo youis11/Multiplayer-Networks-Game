@@ -227,8 +227,23 @@ void Score::start()
 	gameObject->tag = (uint32)(Random.next() * UINT_MAX);
 	gameObject->angle = 0;
 
-	gameObject->position = { 200,-250 };
 
+	switch (scorePlayerNum)
+	{
+	case Score::SCORE_PLAYER1:
+		gameObject->position = { 200,-250 };
+		break;
+	case Score::SCORE_PLAYER2:
+		gameObject->position = { -200,-250 };
+		break;
+	case Score::NONE:
+		break;
+	default:
+		break;
+	}
+
+	if (isServer)
+		NetworkUpdate(gameObject);
 }
 
 //void Score::onInput(const InputController& input)
@@ -267,4 +282,33 @@ int Score::GetScoreValue()
 
 void Score::SetScoreValue(int value)
 {
+}
+
+void Ball::start()
+{
+}
+
+void Ball::update()
+{
+}
+
+void Ball::destroy()
+{
+}
+
+void Ball::onCollisionTriggered(Collider& c1, Collider& c2)
+{
+}
+
+void Ball::write(OutputMemoryStream& packet)
+{
+}
+
+void Ball::read(const InputMemoryStream& packet)
+{
+}
+
+float Ball::GetSecondsLived()
+{
+	return 0.0f;
 }

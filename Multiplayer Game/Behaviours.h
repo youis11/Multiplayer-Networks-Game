@@ -111,6 +111,14 @@ struct Score : public Behaviour
 {
 	int score_value = 0;
 
+	enum ScorePlayerNum
+	{
+		SCORE_PLAYER1,
+		SCORE_PLAYER2,
+		NONE
+	};
+	ScorePlayerNum scorePlayerNum;
+
 	BehaviourType type() const override { return BehaviourType::Score; }
 
 	void start() override;

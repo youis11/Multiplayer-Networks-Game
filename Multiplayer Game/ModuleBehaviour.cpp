@@ -29,7 +29,7 @@ Behaviour *ModuleBehaviour::addBehaviour(BehaviourType behaviourType, GameObject
 	/*case BehaviourType::Laser:
 		return addLaser(parentGameObject);*/
 	case BehaviourType::Score:
-		return addScore(parentGameObject);
+		return addScore(parentGameObject, space_ship_type);
 	default:
 	case BehaviourType::Spaceship:
 		return addSpaceship(parentGameObject, space_ship_type);
@@ -77,7 +77,7 @@ Laser *ModuleBehaviour::addLaser(GameObject *parentGameObject)
 	return nullptr;
 }
 
-Score* ModuleBehaviour::addScore(GameObject* parentGameObject)
+Score* ModuleBehaviour::addScore(GameObject* parentGameObject, uint32 type)
 {
 	for (Score& behaviour : scores)
 	{
@@ -86,6 +86,11 @@ Score* ModuleBehaviour::addScore(GameObject* parentGameObject)
 			behaviour = {};
 			behaviour.gameObject = parentGameObject;
 			parentGameObject->behaviour = &behaviour;
+			if (type == 0)
+				behaviour.scorePlayerNum = behaviour.ScorePlayerNum::SCORE_PLAYER1;
+			else
+				behaviour.scorePlayerNum = behaviour.ScorePlayerNum::SCORE_PLAYER2;
+
 			return &behaviour;
 		}
 	}

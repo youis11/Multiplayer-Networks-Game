@@ -12,7 +12,7 @@ public:
 	Spaceship * addSpaceship(GameObject *parentGameObject, uint32 type);
 	Laser     * addLaser(GameObject *parentGameObject);
 	//Ball* addBall(GameObject *parentGameObject);
-	Score* addScore(GameObject* parentGameObject);
+	Score* addScore(GameObject* parentGameObject, uint32 type);
 
 private:
 
