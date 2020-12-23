@@ -41,6 +41,7 @@ private:
 	//////////////////////////////////////////////////////////////////////
 
 	uint32 nextClientId = 0;
+	bool game_is_full = false;
 
 	struct ClientProxy
 	{
@@ -72,7 +73,6 @@ private:
     void destroyClientProxy(ClientProxy *clientProxy);
 
 
-
 public:
 
 	//////////////////////////////////////////////////////////////////////
@@ -80,8 +80,8 @@ public:
 	//////////////////////////////////////////////////////////////////////
 
 	GameObject * spawnPlayer(uint8 spaceshipType, vec2 initialPosition, float initialAngle);
-	GameObject * spawnLaser(uint8 spaceshipType, vec2 initialPosition, float initialAngle);
 	GameObject * spawnBall(vec2 initialPosition, float initialAngle);
+	GameObject * spawnWall(vec2 initialPosition);
 	GameObject * spawnScore(uint8 spaceshipType, vec2 initialPosition);
 
 private:

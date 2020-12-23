@@ -1,7 +1,7 @@
 #include "Networks.h"
 #include "Behaviours.h"
 #include <string>
-
+#include <random>
 
 void Laser::start()
 {
@@ -82,8 +82,7 @@ void Spaceship::onInput(const InputController &input)
 		if (gameObject->position.y >= min_high && gameObject->position.y <= max_high)
 		{
 			gameObject->position.y -= input.verticalAxis * speed * Time.deltaTime;
-			if (isServer)
-				NetworkUpdate(gameObject);
+			
 		}
 
 		if (gameObject->position.y < min_high)
@@ -91,6 +90,8 @@ void Spaceship::onInput(const InputController &input)
 		if (gameObject->position.y > max_high)
 			gameObject->position.y = max_high;
 	}
+	if (isServer)
+		NetworkUpdate(gameObject);
 
 	/*if (input.horizontalAxis != 0.0f)
 	{
@@ -284,11 +285,17 @@ void Score::SetScoreValue(int value)
 {
 }
 
+
 void Ball::start()
 {
 	gameObject->tag = (uint32)(Random.next() * UINT_MAX);
 	gameObject->position = { 0,0 };
-	gameObject->angle = 90;
+	gameObject->angle = 0;
+
+	speedX = 200;
+	std::default_random_engine generator;
+	std::uniform_real_distribution<double> distribution(-200, +200); 
+	speedY = distribution(generator);
 
 	if (isServer)
 		NetworkUpdate(gameObject);
@@ -296,9 +303,12 @@ void Ball::start()
 
 void Ball::update()
 {
-
 	const float advanceSpeed = 200.0f;
-	gameObject->position += vec2FromDegrees(gameObject->angle) * dir * advanceSpeed * Time.deltaTime;
+	//gameObject->position += vec2FromDegrees(dir_angle) * dir * advanceSpeed * Time.deltaTime;
+	ball_y +=speedY * Time.deltaTime;
+	ball_x +=speedX * Time.deltaTime;
+
+	gameObject->position = { ball_x, ball_y };
 
 	if (isServer)
 		NetworkUpdate(gameObject);
@@ -312,11 +322,18 @@ void Ball::onCollisionTriggered(Collider& c1, Collider& c2)
 {
 	if (c2.type == ColliderType::Player && c2.gameObject->tag != gameObject->tag)
 	{
-		ChangeDirection();
+		if (isServer)
+		{			
+			speedX = -speedX;
+		}
+		
 	}
 	if (c2.type == ColliderType::Wall && c2.gameObject->tag != gameObject->tag)
 	{
-
+		if (isServer)
+		{			
+			speedY = -speedY;
+		}
 	}
 }
 
@@ -326,14 +343,4 @@ void Ball::write(OutputMemoryStream& packet)
 
 void Ball::read(const InputMemoryStream& packet)
 {
-}
-
-float Ball::GetSecondsLived()
-{
-	return 0.0f;
-}
-
-void Ball::ChangeDirection()
-{
-	dir *= -1;
 }

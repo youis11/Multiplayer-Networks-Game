@@ -119,14 +119,23 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 					proxy->clientId = nextClientId++;
 					//proxy->secondsSinceLastReplication = replicationDeliveryIntervalSeconds;
 
-					
+					if (clientProxies[0].connected && clientProxies[1].connected && !game_is_full)
+					{
+						// Create new network object BALL
+						vec2 initialBallPosition = { 0,0 };
+						float initialBallAngle = 360.0f * Random.next();
+						proxy->gameObject = spawnBall(initialBallPosition, initialBallAngle);
+						// Create new network object WALL
+						vec2 initialWallPosition = { 0,370 };
+						proxy->gameObject = spawnWall(initialWallPosition);
+						proxy->gameObject = spawnWall(initialWallPosition * -1);
+
+						game_is_full = true;
+					}
 
 					// Create new network object SCORE
 					proxy->gameObject = spawnScore(spaceshipType, { 0,0 });		
-					// Create new network object BALL
-					vec2 initialBallPosition = { 0,0 };
-					float initialBallAngle = 360.0f * Random.next();
-					proxy->gameObject = spawnBall(initialBallPosition, initialBallAngle);
+
 					// Create new network object PLAYER
 					vec2 initialPosition = 500.0f * vec2{ Random.next() - 0.5f, Random.next() - 0.5f };
 					float initialAngle = 360.0f * Random.next();
@@ -372,7 +381,7 @@ GameObject * ModuleNetworkingServer::spawnPlayer(uint8 spaceshipType, vec2 initi
 	// Create a new game object with the player properties
 	GameObject *gameObject = NetworkInstantiate();
 	gameObject->position = initialPosition;
-	gameObject->size = { 100, 100 };
+	gameObject->size = { 30, 120 };
 	gameObject->angle = initialAngle;
 
 	// Create sprite
@@ -397,7 +406,7 @@ GameObject* ModuleNetworkingServer::spawnBall(vec2 initialPosition, float initia
 	// Create a new game object with the ball properties
 	GameObject* gameObject = NetworkInstantiate();
 	gameObject->position = initialPosition;
-	gameObject->size = { 100, 100 };
+	gameObject->size = { 30, 30};
 	gameObject->angle = initialAngle;
 
 	// Create sprite
@@ -417,6 +426,26 @@ GameObject* ModuleNetworkingServer::spawnBall(vec2 initialPosition, float initia
 	return gameObject;
 }
 
+GameObject* ModuleNetworkingServer::spawnWall(vec2 initialPosition)
+{
+	// Create a new game object with the ball properties
+	GameObject* gameObject = NetworkInstantiate();
+	gameObject->position = initialPosition;
+	gameObject->size = { 1000, 50 };
+	gameObject->angle = 0;
+
+	// Create sprite
+	gameObject->sprite = App->modRender->addSprite(gameObject);
+	gameObject->sprite->order = 7;
+	gameObject->sprite->texture = App->modResources->asteroid2;
+
+	// Create collider
+	gameObject->collider = App->modCollision->addCollider(ColliderType::Wall, gameObject);
+	gameObject->collider->isTrigger = true; // NOTE(jesus): This object will receive onCollisionTriggered events
+
+	return gameObject;
+}
+
 GameObject* ModuleNetworkingServer::spawnScore(uint8 spaceshipType, vec2 initialPosition)
 {
 	// Create a new game object with the player properties
@@ -430,10 +459,6 @@ GameObject* ModuleNetworkingServer::spawnScore(uint8 spaceshipType, vec2 initial
 	gameObject->sprite->order = 5;
 	gameObject->sprite->texture = App->modResources->score_0;
 	
-	// Create collider
-	//gameObject->collider = App->modCollision->addCollider(ColliderType::Player, gameObject);
-	//gameObject->collider->isTrigger = true; // NOTE(jesus): This object will receive onCollisionTriggered events
-
 	// Create behaviour
 	Score* scoreBehaviour = App->modBehaviour->addScore(gameObject, spaceshipType);
 	gameObject->behaviour = scoreBehaviour;
