@@ -113,7 +113,10 @@ struct Ball : public Behaviour
 
 struct Score : public Behaviour
 {
-	int score_value = 0;
+	int score_value_player1 = 0;
+	int score_value_player2 = 0;
+	bool player1_scored = false;
+	bool player2_scored = false;
 
 	enum ScorePlayerNum
 	{
@@ -135,6 +138,5 @@ struct Score : public Behaviour
 
 	void read(const InputMemoryStream& packet) override;
 
-	int GetScoreValue();
-	void SetScoreValue(int value);
+	Texture* NextScoreTexture(Texture* texture, int my_score);
 };

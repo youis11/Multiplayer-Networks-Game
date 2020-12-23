@@ -30,9 +30,6 @@ Behaviour *ModuleBehaviour::addBehaviour(BehaviourType behaviourType, GameObject
 {
 	switch (behaviourType)
 	{
-	
-	/*case BehaviourType::Laser:
-		return addLaser(parentGameObject);*/
 	case BehaviourType::Score:
 		return addScore(parentGameObject, space_ship_type);
 	default:
@@ -121,23 +118,6 @@ Score* ModuleBehaviour::addScore(GameObject* parentGameObject, uint32 type)
 	ASSERT(false);
 	return nullptr;
 }
-
-//Ball* ModuleBehaviour::addBall(GameObject* parentGameObject)
-//{
-//	for (Ball& behaviour : balls)
-//	{
-//		if (behaviour.gameObject == nullptr)
-//		{
-//			behaviour = {};
-//			behaviour.gameObject = parentGameObject;
-//			parentGameObject->behaviour = &behaviour;
-//			return &behaviour;
-//		}
-//	}
-//
-//	ASSERT(false);
-//	return nullptr;
-//}
 
 void ModuleBehaviour::handleBehaviourLifeCycle(Behaviour *behaviour)
 {

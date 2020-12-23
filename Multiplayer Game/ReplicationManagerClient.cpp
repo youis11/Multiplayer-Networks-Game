@@ -191,4 +191,14 @@ void ReplicationManagerClient::deserializeUpdate(const InputMemoryStream& packet
 	packet.Read(gameObject->position.x);
 	packet.Read(gameObject->position.y);
 	packet.Read(gameObject->angle);
+
+	// Texture Score updates
+	bool ret = false;
+	packet.Read(ret);
+	if (ret)
+	{
+		std::string textureFilename;
+		packet.Read(textureFilename);
+		gameObject->sprite->texture = App->modResources->FindByTextureName(textureFilename);
+	}
 }

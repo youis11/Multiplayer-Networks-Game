@@ -83,14 +83,7 @@ void ReplicationManagerServer::serializeCreate(OutputMemoryStream& packet, GameO
 		//TODO write texture packet (I think its done)
 		std::string textureFilename = gameObject->sprite->texture->filename;
 		packet.Write(textureFilename);
-		packet.Write(gameObject->sprite->order);
-
-		/*packet.Write(gameObject->sprite->pivot.x);
-		packet.Write(gameObject->sprite->pivot.y);
-		packet.Write(gameObject->sprite->color.x);
-		packet.Write(gameObject->sprite->color.y);
-		packet.Write(gameObject->sprite->color.z);
-		packet.Write(gameObject->sprite->color.w);*/
+		packet.Write(gameObject->sprite->order);	
 	}
 	else
 	{
@@ -146,5 +139,14 @@ void ReplicationManagerServer::serializeUpdate(OutputMemoryStream& packet, GameO
 	packet.Write(gameObject->position.x);
 	packet.Write(gameObject->position.y);
 	packet.Write(gameObject->angle);
+
+	if (gameObject->sprite != nullptr)
+	{
+		packet.Write(true); // Texture exists
+		std::string filename = gameObject->sprite->texture->filename;
+		packet.Write(filename);
+	}
+	else
+		packet.Write(false);
 
 }

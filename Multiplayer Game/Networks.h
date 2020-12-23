@@ -88,7 +88,8 @@ enum class ColliderType
 	Player,
 	Laser,
 	Ball,
-	Wall
+	Wall,
+	Goal
 };
 
 

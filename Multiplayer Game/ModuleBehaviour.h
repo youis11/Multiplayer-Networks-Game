@@ -20,7 +20,9 @@ private:
 
 	Spaceship spaceships[MAX_CLIENTS];
 	Laser lasers[MAX_GAME_OBJECTS];
-	Score scores[MAX_GAME_OBJECTS];
 	Ball balls[MAX_GAME_OBJECTS];
+public:
+	Score scores[MAX_GAME_OBJECTS];
+
 };
 

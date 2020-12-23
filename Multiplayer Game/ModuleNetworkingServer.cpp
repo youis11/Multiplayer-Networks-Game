@@ -129,6 +129,10 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 						vec2 initialWallPosition = { 0,370 };
 						proxy->gameObject = spawnWall(initialWallPosition);
 						proxy->gameObject = spawnWall(initialWallPosition * -1);
+						// Create new network object GOAL
+						vec2 initialGoalPosition = { 500, 0 };
+						proxy->gameObject = spawnGoal(initialGoalPosition);
+						proxy->gameObject = spawnGoal(initialGoalPosition * -1);
 
 						game_is_full = true;
 					}
@@ -441,6 +445,26 @@ GameObject* ModuleNetworkingServer::spawnWall(vec2 initialPosition)
 
 	// Create collider
 	gameObject->collider = App->modCollision->addCollider(ColliderType::Wall, gameObject);
+	gameObject->collider->isTrigger = true; // NOTE(jesus): This object will receive onCollisionTriggered events
+
+	return gameObject;
+}
+
+GameObject* ModuleNetworkingServer::spawnGoal(vec2 initialPosition)
+{
+	// Create a new game object with the ball properties
+	GameObject* gameObject = NetworkInstantiate();
+	gameObject->position = initialPosition;
+	gameObject->size = { 50, 1000 };
+	gameObject->angle = 0;
+
+	// Create sprite
+	gameObject->sprite = App->modRender->addSprite(gameObject);
+	gameObject->sprite->order = 7;
+	gameObject->sprite->texture = App->modResources->asteroid2;
+
+	// Create collider
+	gameObject->collider = App->modCollision->addCollider(ColliderType::Goal, gameObject);
 	gameObject->collider->isTrigger = true; // NOTE(jesus): This object will receive onCollisionTriggered events
 
 	return gameObject;

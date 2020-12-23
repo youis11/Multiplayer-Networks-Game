@@ -157,17 +157,11 @@ void Spaceship::update()
 
 void Spaceship::destroy()
 {
-	//TO DELETE
-	Destroy(lifebar);
-	//----------
 }
 
 void Spaceship::onCollisionTriggered(Collider &c1, Collider &c2)
 {
-	if (c2.type == ColliderType::Ball && c2.gameObject->tag != gameObject->tag)
-	{
-		//TODO(marc): change direction ball behaviour, angle
-	}
+	//TO DELETE
 	/*if (c2.type == ColliderType::Laser && c2.gameObject->tag != gameObject->tag)
 	{
 		if (isServer)
@@ -211,16 +205,17 @@ void Spaceship::onCollisionTriggered(Collider &c1, Collider &c2)
 			App->modSound->playAudioClip(App->modResources->audioClipExplosion);
 		}
 	}*/
+	//----------
 }
 
 void Spaceship::write(OutputMemoryStream & packet)
 {
-	packet << hitPoints;
+	//packet << hitPoints;
 }
 
 void Spaceship::read(const InputMemoryStream & packet)
 {
-	packet >> hitPoints;
+	//packet >> hitPoints;
 }
 
 void Score::start()
@@ -276,13 +271,12 @@ void Score::read(const InputMemoryStream& packet)
 {
 }
 
-int Score::GetScoreValue()
+Texture* Score::NextScoreTexture(Texture* texture, int my_score)
 {
-	return 0;
-}
-
-void Score::SetScoreValue(int value)
-{
+	std::string next_t_name = texture->filename;
+	next_t_name.replace(0, 1, std::to_string(++my_score));
+	Texture* next_t = App->modResources->FindByTextureName(next_t_name);
+	return next_t;
 }
 
 
@@ -341,6 +335,40 @@ void Ball::onCollisionTriggered(Collider& c1, Collider& c2)
 		if (isServer)
 		{			
 			speedY = -speedY;
+		}
+	}
+	if (c2.type == ColliderType::Goal && c2.gameObject->tag != gameObject->tag)
+	{
+		if (isServer)
+		{		
+			if (c2.gameObject->position.x > 0) //Right goal, P2 scores 1
+			{
+				for (Score& behaviour : App->modBehaviour->scores)
+				{
+					if (behaviour.scorePlayerNum == behaviour.ScorePlayerNum::SCORE_PLAYER2)
+					{
+						//Change to new Texture
+						behaviour.gameObject->sprite->texture = behaviour.NextScoreTexture(behaviour.gameObject->sprite->texture, behaviour.score_value_player1);
+						NetworkUpdate(behaviour.gameObject);
+						NetworkDestroy(gameObject); // Destroy the ball
+						break;
+					}
+				}
+			}
+			else if (c2.gameObject->position.x < 0) // Left goal, P1 scores 1
+			{
+				for (Score& behaviour : App->modBehaviour->scores)
+				{
+					if (behaviour.scorePlayerNum == behaviour.ScorePlayerNum::SCORE_PLAYER1)
+					{
+						//Change to new Texture
+						behaviour.gameObject->sprite->texture = behaviour.NextScoreTexture(behaviour.gameObject->sprite->texture, behaviour.score_value_player2);
+						NetworkUpdate(behaviour.gameObject);
+						NetworkDestroy(gameObject); // Destroy the ball
+						break;
+					}
+				}
+			}
 		}
 	}
 }
