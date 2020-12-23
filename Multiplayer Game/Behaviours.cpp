@@ -297,16 +297,39 @@ void Ball::start()
 
 void Ball::update()
 {
-	ball_y +=speedY * Time.deltaTime;
-	ball_x +=speedX * Time.deltaTime;
+	if (!restart)
+	{
+		ball_y += speedY * Time.deltaTime;
+		ball_x += speedX * Time.deltaTime;
 
-	extraSpeedTime += Time.deltaTime;
-	if(extraSpeedTime >= 4){ 
-		extraSpeed+= 20;
-		extraSpeedTime = 0;
+		extraSpeedTime += Time.deltaTime;
+		if (extraSpeedTime >= 4) {
+			extraSpeed += 20;
+			extraSpeedTime = 0;
+		}
+
+		gameObject->position = { ball_x + extraSpeed, ball_y + extraSpeed };
 	}
-
-	gameObject->position = { ball_x + extraSpeed, ball_y + extraSpeed};
+	else
+	{
+		if (restart_timer >= time_to_restart)
+		{
+			restart = false;
+			restart_timer = 0;
+			std::default_random_engine generator;
+			std::uniform_real_distribution<double> distribution(-200, +200);
+			int dir = 0;
+			if (gameObject->position.x < 0) dir = 1;
+			if (gameObject->position.x > 0) dir = -1;
+			
+			speedY = distribution(generator);
+			speedX = 300 * dir
+				;
+		}
+		else
+			restart_timer += Time.deltaTime;
+	}
+	
 
 	if (isServer)
 		NetworkUpdate(gameObject);
@@ -348,9 +371,10 @@ void Ball::onCollisionTriggered(Collider& c1, Collider& c2)
 					if (behaviour.scorePlayerNum == behaviour.ScorePlayerNum::SCORE_PLAYER2)
 					{
 						//Change to new Texture
-						behaviour.gameObject->sprite->texture = behaviour.NextScoreTexture(behaviour.gameObject->sprite->texture, behaviour.score_value_player1);
+						behaviour.gameObject->sprite->texture = behaviour.NextScoreTexture(behaviour.gameObject->sprite->texture, behaviour.score_value_player2);
+						behaviour.score_value_player2++;
+						ResetBall(2);
 						NetworkUpdate(behaviour.gameObject);
-						NetworkDestroy(gameObject); // Destroy the ball
 						break;
 					}
 				}
@@ -362,9 +386,10 @@ void Ball::onCollisionTriggered(Collider& c1, Collider& c2)
 					if (behaviour.scorePlayerNum == behaviour.ScorePlayerNum::SCORE_PLAYER1)
 					{
 						//Change to new Texture
-						behaviour.gameObject->sprite->texture = behaviour.NextScoreTexture(behaviour.gameObject->sprite->texture, behaviour.score_value_player2);
+						behaviour.gameObject->sprite->texture = behaviour.NextScoreTexture(behaviour.gameObject->sprite->texture, behaviour.score_value_player1);
+						behaviour.score_value_player1++;
+						ResetBall(1);
 						NetworkUpdate(behaviour.gameObject);
-						NetworkDestroy(gameObject); // Destroy the ball
 						break;
 					}
 				}
@@ -379,4 +404,22 @@ void Ball::write(OutputMemoryStream& packet)
 
 void Ball::read(const InputMemoryStream& packet)
 {
+}
+
+void Ball::ResetBall(int player_scored)
+{
+	speedX = 0;
+	speedY = 0;
+	extraSpeed = 0;
+	extraSpeedTime = 0;
+	time_to_restart = 2;
+	restart_timer = 0;
+	restart = true;
+
+	ball_y = 0;
+	if(player_scored == 1)	ball_x = -50;
+	else if(player_scored == 2)	ball_x = 50;
+
+	gameObject->position = {ball_x, ball_y};
+
 }

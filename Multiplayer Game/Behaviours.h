@@ -93,8 +93,10 @@ struct Ball : public Behaviour
 	float speedX = 0;
 	float speedY = 0;
 	float extraSpeed = 0;
-	
-	float extraSpeedTime;
+	float extraSpeedTime = 0;
+	float time_to_restart = 0;
+	float restart_timer = 0;
+	bool restart = false;
 
 	BehaviourType type() const override { return BehaviourType::Ball; }
 
@@ -109,6 +111,8 @@ struct Ball : public Behaviour
 	void write(OutputMemoryStream& packet) override;
 
 	void read(const InputMemoryStream& packet) override;
+
+	void ResetBall(int player_scored);
 };
 
 struct Score : public Behaviour
