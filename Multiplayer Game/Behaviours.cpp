@@ -286,10 +286,22 @@ void Score::SetScoreValue(int value)
 
 void Ball::start()
 {
+	gameObject->tag = (uint32)(Random.next() * UINT_MAX);
+	gameObject->position = { 0,0 };
+	gameObject->angle = 90;
+
+	if (isServer)
+		NetworkUpdate(gameObject);
 }
 
 void Ball::update()
 {
+
+	const float advanceSpeed = 200.0f;
+	gameObject->position += vec2FromDegrees(gameObject->angle) * dir * advanceSpeed * Time.deltaTime;
+
+	if (isServer)
+		NetworkUpdate(gameObject);
 }
 
 void Ball::destroy()
@@ -298,6 +310,14 @@ void Ball::destroy()
 
 void Ball::onCollisionTriggered(Collider& c1, Collider& c2)
 {
+	if (c2.type == ColliderType::Player && c2.gameObject->tag != gameObject->tag)
+	{
+		ChangeDirection();
+	}
+	if (c2.type == ColliderType::Wall && c2.gameObject->tag != gameObject->tag)
+	{
+
+	}
 }
 
 void Ball::write(OutputMemoryStream& packet)
@@ -311,4 +331,9 @@ void Ball::read(const InputMemoryStream& packet)
 float Ball::GetSecondsLived()
 {
 	return 0.0f;
+}
+
+void Ball::ChangeDirection()
+{
+	dir *= -1;
 }

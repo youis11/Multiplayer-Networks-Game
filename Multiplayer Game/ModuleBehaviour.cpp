@@ -13,6 +13,11 @@ bool ModuleBehaviour::update()
 		handleBehaviourLifeCycle(&behaviour);
 	}
 	
+	for (Ball &behaviour : balls)
+	{
+		handleBehaviourLifeCycle(&behaviour);
+	}
+	
 	/*for (Laser &behaviour : lasers)
 	{
 		handleBehaviourLifeCycle(&behaviour);
@@ -69,6 +74,24 @@ Laser *ModuleBehaviour::addLaser(GameObject *parentGameObject)
 			behaviour = {};
 			behaviour.gameObject = parentGameObject;
 			parentGameObject->behaviour = &behaviour;
+			return &behaviour;
+		}
+	}
+
+	ASSERT(false);
+	return nullptr;
+}
+
+Ball* ModuleBehaviour::addBall(GameObject* parentGameObject)
+{
+	for (Ball& behaviour : balls)
+	{
+		if (behaviour.gameObject == nullptr)
+		{
+			behaviour = {};
+			behaviour.gameObject = parentGameObject;
+			parentGameObject->behaviour = &behaviour;
+			
 			return &behaviour;
 		}
 	}

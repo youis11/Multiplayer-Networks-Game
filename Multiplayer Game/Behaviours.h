@@ -89,7 +89,7 @@ struct Spaceship : public Behaviour
 struct Ball : public Behaviour
 {
 	float secondsSinceCreation = 0.0f;
-
+	int dir = 1;
 	BehaviourType type() const override { return BehaviourType::Ball; }
 
 	void start() override;
@@ -105,6 +105,8 @@ struct Ball : public Behaviour
 	void read(const InputMemoryStream& packet) override;
 
 	float GetSecondsLived();
+
+	void ChangeDirection();
 };
 
 struct Score : public Behaviour

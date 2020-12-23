@@ -122,7 +122,11 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 					
 
 					// Create new network object SCORE
-					proxy->gameObject = spawnScore(spaceshipType, { 0,0 });
+					proxy->gameObject = spawnScore(spaceshipType, { 0,0 });		
+					// Create new network object BALL
+					vec2 initialBallPosition = { 0,0 };
+					float initialBallAngle = 360.0f * Random.next();
+					proxy->gameObject = spawnBall(initialBallPosition, initialBallAngle);
 					// Create new network object PLAYER
 					vec2 initialPosition = 500.0f * vec2{ Random.next() - 0.5f, Random.next() - 0.5f };
 					float initialAngle = 360.0f * Random.next();
@@ -388,12 +392,37 @@ GameObject * ModuleNetworkingServer::spawnPlayer(uint8 spaceshipType, vec2 initi
 	return gameObject;
 }
 
+GameObject* ModuleNetworkingServer::spawnBall(vec2 initialPosition, float initialAngle)
+{
+	// Create a new game object with the ball properties
+	GameObject* gameObject = NetworkInstantiate();
+	gameObject->position = initialPosition;
+	gameObject->size = { 100, 100 };
+	gameObject->angle = initialAngle;
+
+	// Create sprite
+	gameObject->sprite = App->modRender->addSprite(gameObject);
+	gameObject->sprite->order = 6;
+	gameObject->sprite->texture = App->modResources->asteroid1;
+
+	// Create collider
+	gameObject->collider = App->modCollision->addCollider(ColliderType::Ball, gameObject);
+	gameObject->collider->isTrigger = true; // NOTE(jesus): This object will receive onCollisionTriggered events
+
+	// Create behaviour
+	Ball* ballBehaviour = App->modBehaviour->addBall(gameObject);
+	gameObject->behaviour = ballBehaviour;
+	gameObject->behaviour->isServer = true;
+
+	return gameObject;
+}
+
 GameObject* ModuleNetworkingServer::spawnScore(uint8 spaceshipType, vec2 initialPosition)
 {
 	// Create a new game object with the player properties
 	GameObject* gameObject = NetworkInstantiate();
 	gameObject->position = initialPosition;
-	gameObject->size = { 100, 100 };
+	gameObject->size = { 100, 175 };
 	gameObject->angle = 0;
 
 	// Create sprite
