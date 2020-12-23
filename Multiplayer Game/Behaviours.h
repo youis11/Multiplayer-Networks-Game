@@ -88,11 +88,14 @@ struct Spaceship : public Behaviour
 
 struct Ball : public Behaviour
 {
-	float ball_x;
-	float ball_y;
-	float speedX;
-	float speedY;
+	float ball_x = 0;
+	float ball_y = 0;
+	float speedX = 0;
+	float speedY = 0;
+	float extraSpeed = 0;
 	
+	float extraSpeedTime;
+
 	BehaviourType type() const override { return BehaviourType::Ball; }
 
 	void start() override;

@@ -292,7 +292,7 @@ void Ball::start()
 	gameObject->position = { 0,0 };
 	gameObject->angle = 0;
 
-	speedX = 200;
+	speedX = 300;
 	std::default_random_engine generator;
 	std::uniform_real_distribution<double> distribution(-200, +200); 
 	speedY = distribution(generator);
@@ -303,15 +303,20 @@ void Ball::start()
 
 void Ball::update()
 {
-	const float advanceSpeed = 200.0f;
-	//gameObject->position += vec2FromDegrees(dir_angle) * dir * advanceSpeed * Time.deltaTime;
 	ball_y +=speedY * Time.deltaTime;
 	ball_x +=speedX * Time.deltaTime;
 
-	gameObject->position = { ball_x, ball_y };
+	extraSpeedTime += Time.deltaTime;
+	if(extraSpeedTime >= 4){ 
+		extraSpeed+= 20;
+		extraSpeedTime = 0;
+	}
+
+	gameObject->position = { ball_x + extraSpeed, ball_y + extraSpeed};
 
 	if (isServer)
 		NetworkUpdate(gameObject);
+
 }
 
 void Ball::destroy()
@@ -325,6 +330,9 @@ void Ball::onCollisionTriggered(Collider& c1, Collider& c2)
 		if (isServer)
 		{			
 			speedX = -speedX;
+			std::default_random_engine generator;
+			std::uniform_real_distribution<double> distribution(5, 8);
+			speedY = (gameObject->position.y - c2.gameObject->position.y) * distribution(generator);
 		}
 		
 	}
