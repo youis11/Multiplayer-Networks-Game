@@ -1,5 +1,7 @@
 #include "Networks.h"
 #include "ModuleResources.h"
+#include<string>  
+
 
 
 #if defined(USE_TASK_MANAGER)
@@ -24,6 +26,7 @@ bool ModuleResources::init()
 	spacecraft1 = App->modTextures->loadTexture("spacecraft1.png");
 	spacecraft2 = App->modTextures->loadTexture("spacecraft2.png");
 	spacecraft3 = App->modTextures->loadTexture("spacecraft3.png");
+
 	loadingFinished = true;
 	completionRatio = 1.0f;
 #else
@@ -35,6 +38,17 @@ bool ModuleResources::init()
 	loadTextureAsync("spacecraft3.png",      &spacecraft3, 5);
 	loadTextureAsync("laser.png",            &laser, 6);
 	loadTextureAsync("explosion1.png",       &explosion1, 7);
+
+	loadTextureAsync("0.png",       &score_0, 8);
+	loadTextureAsync("1.png",       &score_1, 9);
+	loadTextureAsync("2.png",       &score_2, 10);
+	loadTextureAsync("3.png",       &score_3, 11);
+	loadTextureAsync("4.png",       &score_4, 12);
+	loadTextureAsync("5.png",       &score_5, 13);
+	loadTextureAsync("6.png",       &score_6, 14);
+	loadTextureAsync("7.png",       &score_7, 15);
+	loadTextureAsync("8.png",       &score_8, 16);
+	loadTextureAsync("9.png",       &score_9, 17);
 #endif
 
 	audioClipLaser = App->modSound->loadAudioClip("laser.wav");
@@ -77,6 +91,26 @@ Texture* ModuleResources::FindByTextureName(std::string textureFilename)
 		return laser;
 	else if (textureFilename == "explosion1.png") 
 		return explosion1;
+	else if (textureFilename == "0.png")
+		return score_0;
+	else if (textureFilename == "1.png")
+		return score_1;
+	else if (textureFilename == "2.png")
+		return score_2;
+	else if (textureFilename == "3.png")
+		return score_3;
+	else if (textureFilename == "4.png")
+		return score_4;
+	else if (textureFilename == "5.png")
+		return score_5;
+	else if (textureFilename == "6.png")
+		return score_6;
+	else if (textureFilename == "7.png")
+		return score_7;
+	else if (textureFilename == "8.png")
+		return score_8;
+	else if (textureFilename == "9.png")
+		return score_9;
 }
 
 void ModuleResources::onTaskFinished(Task * task)

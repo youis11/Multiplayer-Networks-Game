@@ -31,7 +31,9 @@ enum class BehaviourType : uint8
 {
 	None,
 	Spaceship,
-	Laser
+	Laser,
+	Ball,
+	Score
 };
 
 
@@ -51,10 +53,21 @@ struct Laser : public Behaviour
 
 struct Spaceship : public Behaviour
 {
+	//TO DELETE
 	static const uint8 MAX_HIT_POINTS = 5;
 	uint8 hitPoints = MAX_HIT_POINTS;
-
 	GameObject *lifebar = nullptr;
+	//----------
+
+	bool player_waiting = false;
+
+	enum PlayerNum
+	{
+		PLAYER1,
+		PLAYER2,
+		NONE
+	};
+	PlayerNum playerNum;
 
 	BehaviourType type() const override { return BehaviourType::Spaceship; }
 
@@ -71,4 +84,45 @@ struct Spaceship : public Behaviour
 	void write(OutputMemoryStream &packet) override;
 
 	void read(const InputMemoryStream &packet) override;
+};
+
+struct Ball : public Behaviour
+{
+	float secondsSinceCreation = 0.0f;
+
+	BehaviourType type() const override { return BehaviourType::Ball; }
+
+	void start() override;
+
+	void update() override;
+
+	void destroy() override;
+
+	void onCollisionTriggered(Collider& c1, Collider& c2) override;
+
+	void write(OutputMemoryStream& packet) override;
+
+	void read(const InputMemoryStream& packet) override;
+
+	float GetSecondsLived();
+};
+
+struct Score : public Behaviour
+{
+	int score_value = 0;
+
+	BehaviourType type() const override { return BehaviourType::Score; }
+
+	void start() override;
+
+	void update() override;
+
+	void destroy() override;
+
+	void write(OutputMemoryStream& packet) override;
+
+	void read(const InputMemoryStream& packet) override;
+
+	int GetScoreValue();
+	void SetScoreValue(int value);
 };

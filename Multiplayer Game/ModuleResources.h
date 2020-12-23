@@ -1,12 +1,12 @@
 #pragma once
 
 #define USE_TASK_MANAGER
-
 struct Texture;
 
 class ModuleResources : public Module
 {
 public:
+#define MAX_SCORE_TEXTURES 10
 
 	Texture *background = nullptr;
 	Texture *space = nullptr;
@@ -17,6 +17,16 @@ public:
 	Texture *spacecraft3 = nullptr;
 	Texture *laser = nullptr;
 	Texture *explosion1 = nullptr;
+	Texture *score_0 = nullptr;
+	Texture *score_1 = nullptr;
+	Texture *score_2 = nullptr;
+	Texture *score_3 = nullptr;
+	Texture *score_4 = nullptr;
+	Texture *score_5 = nullptr;
+	Texture *score_6 = nullptr;
+	Texture *score_7 = nullptr;
+	Texture *score_8 = nullptr;
+	Texture *score_9 = nullptr;
 
 	AnimationClip *explosionClip = nullptr;
 
@@ -44,7 +54,7 @@ private:
 		void execute() override;
 	};
 
-	static const int MAX_RESOURCES = 16;
+	static const int MAX_RESOURCES = 64;
 	TaskLoadTexture tasks[MAX_RESOURCES] = {};
 	uint32 taskCount = 0;
 	uint32 finishedTaskCount = 0;
