@@ -1,5 +1,5 @@
 #pragma once
-
+#include <list>
 // TODO(you): Reliability on top of UDP lab session
 
 //Baiscamente hemos de enviar los inputs desde el cliente al server hasta que se notifique que la accion ha sido completada, y este dara paso al suiguente.
@@ -14,16 +14,26 @@ public:
 
 	virtual void onDeliverySuccess(DeliveryManager* deliveryManager) = 0;
 	virtual void onDeliveryFailure(DeliveryManager* deliveryManager) = 0;
+};
+
+struct Delivery
+{
+	uint32 sequenceNumber = 0;
+	double dispatchTime = 0.0f;
+	DeliveryDelegate* delegate = nullptr;
+};
+
+class DeliveryManager
+{
 
 	// For senders to write a new seq. numbers into a packet
-	//Delivery* writeSequenceNumber(OutputMemoryStream& packet);
-
+	Delivery* writeSequenceNumber(OutputMemoryStream& packet);
 	// For recievers to process to seq. number from an incoming packet
 	bool processSequenceNumber(const InputMemoryStream& packet);
 
 	// For receivers to write ack'ed seq. numbers into a packet
-	void hasSequenceNumbersPendingAck() const;
-	bool writeSequenceNumberPendingAck(OutputMemoryStream& packet);
+	bool hasSequenceNumbersPendingAck() const;
+	void writeSequenceNumberPendingAck(OutputMemoryStream& packet);
 
 	// For senders to process ack'ed seq. numbers from a packet
 	void processAckdSequenceNumbers(const InputMemoryStream& packet);
@@ -34,16 +44,14 @@ public:
 private:
 	//Private members (sender side)
 	// - The next outgoing sequence number
+	uint32 outgoingSequenceNumber = 0;
 	// - A list of pending deliveries
+	std::list<Delivery*> pendingDeliveries;
 
 	// Private memebers (reciever side)
 	// - The next expected sequence number
+	uint32 expectedSequenceNumber = 0;
 	// - A list of sequence numbers pending ack
+	std::list<uint32> pendingAck;
 };
 
-struct Delivery
-{
-	uint32 sequenceNumber = 0;
-	double dispatchTime = 0.0f;
-	DeliveryDelegate* delegate = nullptr;
-};

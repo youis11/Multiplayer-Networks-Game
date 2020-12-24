@@ -3,36 +3,120 @@
 
 // TODO(you): Reliability on top of UDP lab session
 
-//Delivery* DeliveryDelegate::writeSequenceNumber(OutputMemoryStream& packet)
-//{
-//    //new Delivery
-//    //store into a list from manager (contain the sequence number, delivery time, etc)
-//
-//    return nullptr; //return Delivery
-//}
-
-bool DeliveryDelegate::processSequenceNumber(const InputMemoryStream& packet)
+Delivery * DeliveryManager::writeSequenceNumber(OutputMemoryStream &packet)
 {
-    return false;
+	packet.Write(outgoingSequenceNumber);
+
+	uint32 sequenceNumber = outgoingSequenceNumber++;
+
+	Delivery* delivery = new Delivery();
+	delivery->sequenceNumber = sequenceNumber;
+	delivery->dispatchTime = Time.time;
+
+	pendingDeliveries.push_back(delivery);
+
+	return delivery;
 }
 
-void DeliveryDelegate::hasSequenceNumbersPendingAck() const
+bool DeliveryManager::processSequenceNumber(const InputMemoryStream& packet)
 {
+	uint32 sequenceNumber = 0;
+	packet.Read(sequenceNumber);
+
+	if (expectedSequenceNumber <= sequenceNumber) {
+
+		pendingAck.push_back(expectedSequenceNumber);
+		expectedSequenceNumber = sequenceNumber + 1;
+
+		//packet.Read(expectedSequenceNumber);
+		//packet.Read(delivery.delegate);
+		//packet.Read(delivery.dispatchTime);
+
+		//OutputMemoryStream packet;
+		//writeSequenceNumberPendingAck(packet);
+
+		return true;
+	}
+
+	else {
+		return false;
+	}
 }
 
-bool DeliveryDelegate::writeSequenceNumberPendingAck(OutputMemoryStream& packet)
+bool DeliveryManager::hasSequenceNumbersPendingAck() const
 {
-    return false;
+	return !pendingAck.empty();
 }
 
-void DeliveryDelegate::processAckdSequenceNumbers(const InputMemoryStream& packet)
+void DeliveryManager::writeSequenceNumberPendingAck(OutputMemoryStream& packet)
 {
+	for (auto it : pendingAck)
+	{
+		packet.Write(it);
+	}
+
+	pendingAck.clear();
 }
 
-void DeliveryDelegate::processTimeOutPackets()
+void DeliveryManager::processAckdSequenceNumbers(const InputMemoryStream& packet)
 {
+	uint32 sequenceNumber = 0;
+	packet.Read(sequenceNumber);
+
+	for (auto it = pendingDeliveries.begin(); it != pendingDeliveries.end();)
+	{
+		if ((*it)->sequenceNumber == sequenceNumber)
+		{
+			(*it)->delegate->onDeliverySuccess(this);
+			delete (*it)->delegate;
+			delete* it;
+			it = pendingDeliveries.erase(it);
+		}
+		else if ((*it)->sequenceNumber < sequenceNumber)
+		{			
+			(*it)->delegate->onDeliveryFailure(this);
+			delete (*it)->delegate;
+			delete* it;
+
+			it = pendingDeliveries.erase(it);
+		}
+		else
+			++it;
+	}
+
 }
 
-void DeliveryDelegate::clear()
+void DeliveryManager::processTimeOutPackets()
 {
+	for (std::list<Delivery*>::iterator it = pendingDeliveries.begin(); it != pendingDeliveries.end(); it++)
+	{
+		if (Time.time - (*it)->dispatchTime >= PACKET_DELIVERY_TIMEOUT_SECONDS)
+		{
+			(*it)->delegate->onDeliveryFailure(this);
+			delete (*it)->delegate;
+			delete* it;
+			it = pendingDeliveries.erase(it);
+		}
+		else
+			++it;
+	}
+}
+
+void DeliveryManager::clear()
+{
+	while (!pendingDeliveries.empty())
+	{
+		for (std::list<Delivery*>::iterator it = pendingDeliveries.begin(); it != pendingDeliveries.end(); it++)
+		{			
+			delete (*it)->delegate;
+			delete* it;
+			it = pendingDeliveries.erase(it);			
+		}
+	}
+
+	pendingDeliveries.clear();
+	pendingAck.clear();
+
+	outgoingSequenceNumber = 0;
+	expectedSequenceNumber = 0;
 }
