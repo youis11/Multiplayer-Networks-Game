@@ -148,6 +148,7 @@ void Spaceship::update()
 
 void Spaceship::destroy()
 {
+	NetworkDestroy(gameObject);
 }
 
 void Spaceship::onCollisionTriggered(Collider &c1, Collider &c2)
@@ -253,6 +254,7 @@ void Score::update()
 
 void Score::destroy()
 {
+	NetworkDestroy(gameObject);
 }
 
 void Score::write(OutputMemoryStream& packet)
@@ -280,7 +282,7 @@ void Ball::start()
 	gameObject->position = { 0,0 };
 	gameObject->angle = 0;
 
-	speedX = 300;
+	speedX = 500;
 	std::default_random_engine generator;
 	std::uniform_real_distribution<double> distribution(-200, +200); 
 	speedY = distribution(generator);
@@ -299,13 +301,9 @@ void Ball::update()
 		ball_y += speedY * Time.deltaTime;
 		ball_x += speedX * Time.deltaTime;
 
-		/*extraSpeedTime += Time.deltaTime;
-		if (extraSpeedTime >= 4) {
-			extraSpeed += 40;
-			extraSpeedTime = 0;
-		}*/
+		//speedX+=25; //Unlock this if you want to play pong for one ;) ;) ;)
 
-		gameObject->position = { ball_x + extraSpeed, ball_y + extraSpeed };
+		gameObject->position = { ball_x + extraSpeed, ball_y };
 	}
 	else
 	{
@@ -320,8 +318,7 @@ void Ball::update()
 			if (gameObject->position.x > 0) dir = -1;
 			
 			speedY = distribution(generator);
-			speedX = 300 * dir
-				;
+			speedX = 500 * dir;
 		}
 		else
 			restart_timer += Time.deltaTime;
@@ -335,6 +332,7 @@ void Ball::update()
 
 void Ball::destroy()
 {
+	NetworkDestroy(gameObject);
 }
 
 void Ball::onCollisionTriggered(Collider& c1, Collider& c2)
