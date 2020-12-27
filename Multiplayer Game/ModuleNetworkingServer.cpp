@@ -118,8 +118,10 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 					proxy->name = playerName;
 					proxy->clientId = nextClientId++;
 					//proxy->secondsSinceLastReplication = replicationDeliveryIntervalSeconds;
+					if (spaceshipType == 0) player1_joined = true;
+					if (spaceshipType == 1) player2_joined = true;
 
-					if (clientProxies[0].connected && clientProxies[1].connected && !game_is_full)
+					if (clientProxies[0].connected && clientProxies[1].connected && !game_is_full && player1_joined && player2_joined)
 					{
 						// Create new network object BALL
 						vec2 initialBallPosition = { 0,0 };
@@ -144,6 +146,9 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 					vec2 initialPosition = 500.0f * vec2{ Random.next() - 0.5f, Random.next() - 0.5f };
 					float initialAngle = 360.0f * Random.next();
 					proxy->gameObject = spawnPlayer(spaceshipType, initialPosition, initialAngle);
+
+					
+					
 				}
 				else
 				{
@@ -306,6 +311,8 @@ void ModuleNetworkingServer::onConnectionReset(const sockaddr_in & fromAddress)
 	{
 		// Clear the client proxy
 		destroyClientProxy(proxy);
+		player1_joined = false;
+		player2_joined = false;
 	}
 }
 

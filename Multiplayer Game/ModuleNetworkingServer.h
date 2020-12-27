@@ -84,6 +84,9 @@ public:
 	GameObject * spawnWall(vec2 initialPosition);
 	GameObject * spawnGoal(vec2 initialPosition);
 	GameObject * spawnScore(uint8 spaceshipType, vec2 initialPosition);
+private:
+	bool player1_joined = false;
+	bool player2_joined = false;
 
 private:
 
