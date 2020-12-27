@@ -2,7 +2,7 @@
 
 // TODO(you): World state replication lab session
 enum class ReplicationAction {
-	None, Create, Update, Destroy
+	None, Create, Update, Destroy, Audio
 };
 
 struct ReplicationCommand

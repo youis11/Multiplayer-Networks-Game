@@ -53,7 +53,13 @@ bool ModuleResources::init()
 
 	audioClipLaser = App->modSound->loadAudioClip("laser.wav");
 	audioClipExplosion = App->modSound->loadAudioClip("explosion.wav");
-	//App->modSound->playAudioClip(audioClipExplosion);
+	audioClipStartGame = App->modSound->loadAudioClip("startGame.wav");
+	audioClipPlayerWin = App->modSound->loadAudioClip("playerWins.wav");
+	audioClipBallWall = App->modSound->loadAudioClip("playerBall.wav");
+	audioClipBallPlayer = App->modSound->loadAudioClip("playerBall.wav");
+	audioClipGoal = App->modSound->loadAudioClip("playerGoal.wav");
+	//audioClipBGM = App->modSound->loadAudioClip("BGMusic.ogg");
+	audioClipPlayerJoined = App->modSound->loadAudioClip("playerEnterGame.wav");
 
 	return true;
 }
@@ -77,19 +83,19 @@ Texture* ModuleResources::FindByTextureName(std::string textureFilename)
 {
 	if (textureFilename == "space_background.jpg")
 		return space;
-	else if (textureFilename == "asteroid1.png") 
+	else if (textureFilename == "asteroid1.png")
 		return asteroid1;
-	else if (textureFilename == "asteroid2.png") 
+	else if (textureFilename == "asteroid2.png")
 		return asteroid2;
-	else if (textureFilename == "spacecraft1.png") 
+	else if (textureFilename == "spacecraft1.png")
 		return spacecraft1;
-	else if (textureFilename == "spacecraft2.png") 
+	else if (textureFilename == "spacecraft2.png")
 		return spacecraft2;
-	else if (textureFilename == "spacecraft3.png") 
+	else if (textureFilename == "spacecraft3.png")
 		return spacecraft3;
-	else if (textureFilename == "laser.png") 
+	else if (textureFilename == "laser.png")
 		return laser;
-	else if (textureFilename == "explosion1.png") 
+	else if (textureFilename == "explosion1.png")
 		return explosion1;
 	else if (textureFilename == "0.png")
 		return score_0;
@@ -111,7 +117,30 @@ Texture* ModuleResources::FindByTextureName(std::string textureFilename)
 		return score_8;
 	else if (textureFilename == "9.png")
 		return score_9;
+	else
+		return nullptr;
 }
+
+AudioClip* ModuleResources::FindByAudioClipName(std::string audioFilename)
+{
+	if (audioFilename == "startGame.wav")
+		return audioClipStartGame;
+	else if (audioFilename == "playerWins.wav")
+		return audioClipPlayerWin;
+	else if (audioFilename == "playerBall.wav")
+		return audioClipBallWall;
+	else if (audioFilename == "playerBall.wav")
+		return audioClipBallPlayer;
+	else if (audioFilename == "playerGoal.wav")
+		return audioClipGoal;
+	else if (audioFilename == "BGMusic.ogg")
+		return audioClipBGM;
+	else if (audioFilename == "playerEnterGame.wav")
+		return audioClipPlayerJoined;
+	else
+		return nullptr;
+}
+
 
 void ModuleResources::onTaskFinished(Task * task)
 {

@@ -35,7 +35,6 @@ private:
 	void onDisconnect() override;
 
 
-
 	//////////////////////////////////////////////////////////////////////
 	// Client proxies
 	//////////////////////////////////////////////////////////////////////
@@ -63,7 +62,7 @@ private:
 		uint32 nextExpectedInputSequenceNumber = 0;
 		InputController gamepad;
 	};
-
+public:
 	ClientProxy clientProxies[MAX_CLIENTS];
 
 	ClientProxy * createClientProxy();
@@ -71,6 +70,8 @@ private:
 	ClientProxy * getClientProxy(const sockaddr_in &clientAddress);
 
     void destroyClientProxy(ClientProxy *clientProxy);
+
+	void playNetworkAudio(std::string fileName);
 
 
 public:

@@ -67,7 +67,6 @@ public:
 	static void Destroy(GameObject * gameObject, float delaySeconds);
 
 
-
 	GameObject gameObjects[MAX_GAME_OBJECTS] = {};
 
 private:

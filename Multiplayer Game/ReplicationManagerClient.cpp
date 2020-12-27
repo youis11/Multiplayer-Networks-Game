@@ -46,7 +46,11 @@ void ReplicationManagerClient::read(const InputMemoryStream& packet)
 			App->modGameObject->Destroy(gameObject);
 			break;
 		}
+		case ReplicationAction::Audio: {
+			deserializeAudio(packet);
 
+			break;
+		}
 		default: {
 			break;
 		}
@@ -200,5 +204,17 @@ void ReplicationManagerClient::deserializeUpdate(const InputMemoryStream& packet
 		std::string textureFilename;
 		packet.Read(textureFilename);
 		gameObject->sprite->texture = App->modResources->FindByTextureName(textureFilename);
+	}
+}
+
+void ReplicationManagerClient::deserializeAudio(const InputMemoryStream& packet)
+{
+	bool ret = false;
+	packet.Read(ret);
+	if (ret)
+	{
+		std::string audioClipFileName;
+		packet.Read(audioClipFileName);
+		App->modSound->playAudioClip(App->modResources->FindByAudioClipName(audioClipFileName));
 	}
 }

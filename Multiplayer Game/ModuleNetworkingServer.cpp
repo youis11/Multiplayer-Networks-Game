@@ -332,7 +332,8 @@ void ModuleNetworkingServer::onDisconnect()
 	}
 	
 	nextClientId = 0;
-
+	player1_joined = false;
+	player2_joined = false;
 	state = ServerState::Stopped;
 }
 
@@ -380,6 +381,19 @@ void ModuleNetworkingServer::destroyClientProxy(ClientProxy *clientProxy)
 	}
 
     *clientProxy = {};
+}
+
+void ModuleNetworkingServer::playNetworkAudio(std::string fileName)
+{
+	for (ClientProxy& clientProxy : clientProxies)
+	{
+		if (clientProxy.connected)
+		{
+			clientProxy.m_replicationManager.playAudio(0, fileName);
+
+		}
+	}
+
 }
 
 

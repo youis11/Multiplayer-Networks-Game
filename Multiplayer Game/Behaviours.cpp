@@ -31,22 +31,11 @@ float Laser::GetSecondsLived()
 }
 
 
-
-
-
-
 void Spaceship::start()
 {
 	gameObject->tag = (uint32)(Random.next() * UINT_MAX);
 	gameObject->angle = 0;
-	
-	/*if (player_waiting)
-		playerNum = PlayerNum::PLAYER2;
-	else
-	{
-		player_waiting = true;
-		playerNum = PlayerNum::PLAYER1;
-	}*/
+	PlayAudioClip("playerEnterGame.wav");
 
 	switch (playerNum)
 	{
@@ -93,6 +82,7 @@ void Spaceship::onInput(const InputController &input)
 	if (isServer)
 		NetworkUpdate(gameObject);
 
+	//TO DELETE
 	/*if (input.horizontalAxis != 0.0f)
 	{
 		const float rotateSpeed = 180.0f;
@@ -140,6 +130,7 @@ void Spaceship::onInput(const InputController &input)
 			}
 		}
 	}*/
+	//----------
 }
 
 void Spaceship::update()
@@ -210,12 +201,10 @@ void Spaceship::onCollisionTriggered(Collider &c1, Collider &c2)
 
 void Spaceship::write(OutputMemoryStream & packet)
 {
-	//packet << hitPoints;
 }
 
 void Spaceship::read(const InputMemoryStream & packet)
 {
-	//packet >> hitPoints;
 }
 
 void Score::start()
@@ -242,18 +231,6 @@ void Score::start()
 		NetworkUpdate(gameObject);
 }
 
-//void Score::onInput(const InputController& input)
-//{
-//	if (input.actionDown == ButtonState::Press)
-//	{
-//		score_value++;
-//		if (score_value > 9)
-//			score_value = 0;
-//		gameObject->sprite->texture = App->modResources->FindByTextureName(std::to_string(score_value) + ".png");
-//		if (isServer)
-//			NetworkUpdate(gameObject);
-//	}
-//}
 
 void Score::update()
 {
@@ -308,6 +285,9 @@ void Ball::start()
 	std::uniform_real_distribution<double> distribution(-200, +200); 
 	speedY = distribution(generator);
 
+	PlayAudioClip("startGame.wav");
+
+
 	if (isServer)
 		NetworkUpdate(gameObject);
 }
@@ -319,11 +299,11 @@ void Ball::update()
 		ball_y += speedY * Time.deltaTime;
 		ball_x += speedX * Time.deltaTime;
 
-		extraSpeedTime += Time.deltaTime;
+		/*extraSpeedTime += Time.deltaTime;
 		if (extraSpeedTime >= 4) {
 			extraSpeed += 40;
 			extraSpeedTime = 0;
-		}
+		}*/
 
 		gameObject->position = { ball_x + extraSpeed, ball_y + extraSpeed };
 	}
@@ -367,6 +347,7 @@ void Ball::onCollisionTriggered(Collider& c1, Collider& c2)
 			std::default_random_engine generator;
 			std::uniform_real_distribution<double> distribution(5, 8);
 			speedY = (gameObject->position.y - c2.gameObject->position.y) * distribution(generator);
+			PlayAudioClip("playerBall.wav");
 		}
 		
 	}
@@ -375,12 +356,15 @@ void Ball::onCollisionTriggered(Collider& c1, Collider& c2)
 		if (isServer)
 		{			
 			speedY = -speedY;
+			PlayAudioClip("playerBall.wav");
 		}
 	}
 	if (c2.type == ColliderType::Goal && c2.gameObject->tag != gameObject->tag)
 	{
 		if (isServer)
 		{		
+			PlayAudioClip("startGame.wav");
+
 			if (c2.gameObject->position.x > 0) //Right goal, P2 scores 1
 			{
 				for (Score& behaviour : App->modBehaviour->scores)
@@ -389,8 +373,9 @@ void Ball::onCollisionTriggered(Collider& c1, Collider& c2)
 					{
 						//Change to new Texture
 						behaviour.gameObject->sprite->texture = behaviour.NextScoreTexture(behaviour.gameObject->sprite->texture, behaviour.score_value_player2);
-						behaviour.score_value_player2++;					
+						behaviour.score_value_player2++;	
 						ResetBall(2);
+
 						NetworkUpdate(behaviour.gameObject);
 						break;
 					}
@@ -436,7 +421,14 @@ void Ball::ResetBall(int player_scored)
 	ball_y = 0;
 	if(player_scored == 1)	ball_x = -50;
 	else if(player_scored == 2)	ball_x = 50;
+	PlayAudioClip("playerWins.wav");
 
 	gameObject->position = {ball_x, ball_y};
 
+}
+
+void Behaviour::PlayAudioClip(std::string fileName)
+{
+	App->modSound->playAudioClip(App->modResources->FindByAudioClipName(fileName));
+	App->modNetServer->playNetworkAudio(fileName);
 }

@@ -12,6 +12,7 @@ struct AudioClip
 	uint32 samplingRate = 0;
 	uint16 bitsPerSample = 0;
 	uint16 channelCount = 0;
+	std::string filename = "";
 };
 
 class ModuleSound : public Module
@@ -43,7 +44,7 @@ private:
 
 	int16 Samples[48000 * 2];
 
-	AudioClip audioClips[2] = {};
+	AudioClip audioClips[8] = {};
 
 	enum audio_source_flags {
 		AUDIO_SOURCE_START_BIT = 1<<0,

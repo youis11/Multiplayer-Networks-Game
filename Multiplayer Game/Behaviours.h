@@ -24,6 +24,8 @@ struct Behaviour
 	virtual void write(OutputMemoryStream &packet) { }
 
 	virtual void read(const InputMemoryStream &packet) { }
+
+	void PlayAudioClip(std::string fileName);
 };
 
 

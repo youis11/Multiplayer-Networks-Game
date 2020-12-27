@@ -32,11 +32,18 @@ public:
 
 	AudioClip *audioClipLaser = nullptr;
 	AudioClip *audioClipExplosion = nullptr;
+	AudioClip *audioClipPlayerJoined = nullptr;
+	AudioClip *audioClipBallPlayer = nullptr;
+	AudioClip *audioClipBallWall = nullptr;
+	AudioClip *audioClipGoal = nullptr;
+	AudioClip *audioClipBGM = nullptr;
+	AudioClip *audioClipPlayerWin = nullptr;
+	AudioClip *audioClipStartGame = nullptr;
 
 	bool finishedLoading = false;
 
 	Texture* FindByTextureName(std::string textureFilename);
-
+	AudioClip* FindByAudioClipName(std::string audioFilename);
 private:
 
 	bool init() override;

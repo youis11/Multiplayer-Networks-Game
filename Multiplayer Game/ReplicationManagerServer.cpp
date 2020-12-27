@@ -27,6 +27,13 @@ void ReplicationManagerServer::destroy(uint32 networkId)
 	actions[networkId].action = ReplicationAction::Destroy;
 }
 
+void ReplicationManagerServer::playAudio(uint32 networkId, std::string fileName)
+{
+	actions[networkId].action = ReplicationAction::Audio;
+	audioQueue.push_back(fileName);
+
+}
+
 void ReplicationManagerServer::write(OutputMemoryStream& packet)
 {
 	//TODO: Rewrite this but well coded
@@ -52,7 +59,13 @@ void ReplicationManagerServer::write(OutputMemoryStream& packet)
 			serializeUpdate(packet, gameObject);
 		}
 		break;
-		case ReplicationAction::Destroy:{
+		case ReplicationAction::Destroy: {
+			break;
+		}
+
+		case ReplicationAction::Audio: {
+			serializeAudio(packet, audioQueue.front());
+			audioQueue.clear();
 			break;
 		}
 
@@ -145,6 +158,18 @@ void ReplicationManagerServer::serializeUpdate(OutputMemoryStream& packet, GameO
 		packet.Write(true); // Texture exists
 		std::string filename = gameObject->sprite->texture->filename;
 		packet.Write(filename);
+	}
+	else
+		packet.Write(false);
+}
+
+void ReplicationManagerServer::serializeAudio(OutputMemoryStream& packet, std::string fileName) const
+{
+
+	if (!fileName.empty())
+	{
+		packet.Write(true);
+		packet.Write(fileName);
 	}
 	else
 		packet.Write(false);
