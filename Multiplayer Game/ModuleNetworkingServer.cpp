@@ -260,7 +260,6 @@ void ModuleNetworkingServer::onUpdate()
 		{
 			if (clientProxy.connected)
 			{
-				clientProxy.m_deliveryManager.processTimedOutPackets();			
 
 				// TODO(you): UDP virtual connection lab session
 				if (secondsSinceLastPing >= PING_INTERVAL_SECONDS) {
@@ -298,6 +297,8 @@ void ModuleNetworkingServer::onUpdate()
 				}
 				
 				// TODO(you): Reliability on top of UDP lab session
+				clientProxy.m_deliveryManager.processTimedOutPackets();
+
 			}			
 		}
 		if (secondsSinceLastPing >= PING_INTERVAL_SECONDS)

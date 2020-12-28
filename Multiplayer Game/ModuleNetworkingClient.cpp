@@ -147,6 +147,7 @@ void ModuleNetworkingClient::onPacketReceived(const InputMemoryStream &packet, c
 
 				if (m_deliveryManager.hasSequenceNumbersPendingAck()) {
 					OutputMemoryStream stream;
+					stream << PROTOCOL_ID;
 					stream << ClientMessage::Ack;
 					m_deliveryManager.writeSequenceNumbersPendingAck(stream);
 					sendPacket(stream, fromAddress);
