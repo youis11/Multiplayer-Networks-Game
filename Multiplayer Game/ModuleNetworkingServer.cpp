@@ -117,7 +117,6 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 					proxy->connected = true;
 					proxy->name = playerName;
 					proxy->clientId = nextClientId++;
-					//proxy->secondsSinceLastReplication = replicationDeliveryIntervalSeconds;
 					if (spaceshipType == 0) player1_joined = true;
 					if (spaceshipType == 1) player2_joined = true;
 
@@ -220,12 +219,6 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 						proxy->gameObject->behaviour->onInput(proxy->gamepad);
 						proxy->nextExpectedInputSequenceNumber = inputData.sequenceNumber + 1;
 					}
-
-					OutputMemoryStream reliabilityPacket;
-					reliabilityPacket << PROTOCOL_ID;
-					reliabilityPacket << ServerMessage::Reliability;
-					reliabilityPacket << sequenceNumber;
-					sendPacket(reliabilityPacket, fromAddress);
 				}
 			}
 		}
@@ -234,6 +227,11 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 		else if (message == ClientMessage::Ping) {
 			proxy->lastPacketReceivedTime = Time.time;
 			
+		}
+		else if (message == ClientMessage::Ack) {
+			if (proxy != nullptr) {
+				proxy->m_deliveryManager.processAckdSequenceNumbers(packet);
+			}
 		}
 	}
 }
@@ -262,6 +260,8 @@ void ModuleNetworkingServer::onUpdate()
 		{
 			if (clientProxy.connected)
 			{
+				clientProxy.m_deliveryManager.processTimedOutPackets();			
+
 				// TODO(you): UDP virtual connection lab session
 				if (secondsSinceLastPing >= PING_INTERVAL_SECONDS) {
 					OutputMemoryStream packet;
@@ -284,8 +284,11 @@ void ModuleNetworkingServer::onUpdate()
 					OutputMemoryStream packet;
 					packet << PROTOCOL_ID;
 					packet << ServerMessage::Replication;
-
+					Delivery* delivery = clientProxy.m_deliveryManager.writeSequenceNumber(packet);
+					packet.Write(clientProxy.nextExpectedInputSequenceNumber);				
 					clientProxy.m_replicationManager.write(packet);
+					delivery->dispatchTime = Time.time;
+					delivery->delegate = new ReplicationDeliveryDelegate(&clientProxy.m_replicationManager);
 					sendPacket(packet, clientProxy.address);
 
 					clientProxy.secondsSinceLastReplication = 0.0f;

@@ -17,9 +17,9 @@ public:
 	void serializeUpdate(OutputMemoryStream& packet, GameObject* gameObject) const;
 	void serializeAudio(OutputMemoryStream& packet, std::string fileName) const;
 
+	std::map<uint32, ReplicationCommand> actions;
 
 private:
-	std::map<uint32, ReplicationCommand> actions;
 	std::vector<std::string> audioQueue;
 
 };

@@ -7,37 +7,62 @@
 //En el caso de que haya un drop del server->cliente, el el server hará lo suyo y esperará el siguiente paquete. Cuando el cliente vuelva a enviar todo, el server descartará lo que ya ha procesado
 
 class DeliveryManager;
+class ReplicationManagerServer;
+struct ReplicationCommand;
 
 class DeliveryDelegate
 {
 public:
+	virtual void onDeliverySuccess(DeliveryManager* deliverManager) = 0;
+	virtual void onDeliveryFailure(DeliveryManager* deliverManager) = 0;
+};
 
-	virtual void onDeliverySuccess(DeliveryManager* deliveryManager) = 0;
-	virtual void onDeliveryFailure(DeliveryManager* deliveryManager) = 0;
+class ReplicationDeliveryDelegate : public DeliveryDelegate
+{
+public:
+
+	ReplicationDeliveryDelegate(ReplicationManagerServer* repManager);
+
+	void onDeliverySuccess(DeliveryManager* deliverManager)
+	{
+
+	}
+	void onDeliveryFailure(DeliveryManager* deliverManager)
+	{
+		repeatReplication();
+	}
+
+private:
+	void repeatReplication();
+
+	std::vector<ReplicationCommand> actions;
+	ReplicationManagerServer* replicationManager = nullptr;
 };
 
 struct Delivery
 {
 	uint32 sequenceNumber = 0;
-	double dispatchTime = 0.0f;
+	double dispatchTime = 0.0;
 	DeliveryDelegate* delegate = nullptr;
 };
 
 class DeliveryManager
 {
+public:
 
 	// For senders to write a new seq. numbers into a packet
 	Delivery* writeSequenceNumber(OutputMemoryStream& packet);
-	// For recievers to process to seq. number from an incoming packet
+
+	// For receivers to process the seq. number from an incoming packet
 	bool processSequenceNumber(const InputMemoryStream& packet);
 
 	// For receivers to write ack'ed seq. numbers into a packet
 	bool hasSequenceNumbersPendingAck() const;
-	void writeSequenceNumberPendingAck(OutputMemoryStream& packet);
+	void writeSequenceNumbersPendingAck(OutputMemoryStream& packet);
 
 	// For senders to process ack'ed seq. numbers from a packet
 	void processAckdSequenceNumbers(const InputMemoryStream& packet);
-	void processTimeOutPackets();
+	void processTimedOutPackets();
 
 	void clear();
 

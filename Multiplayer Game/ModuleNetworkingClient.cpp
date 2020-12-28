@@ -1,6 +1,5 @@
 #include "ModuleNetworkingClient.h"
 
-
 //////////////////////////////////////////////////////////////////////
 // ModuleNetworkingClient public methods
 //////////////////////////////////////////////////////////////////////
@@ -140,13 +139,21 @@ void ModuleNetworkingClient::onPacketReceived(const InputMemoryStream &packet, c
 			lastPacketReceivedTime = Time.time;
 		else if (message == ServerMessage::Replication)
 		{
-			//is that all?
-			m_replicationManager.read(packet);
-		}
-		else if (message == ServerMessage::Reliability)
-		{
-			packet >> inputDataFront;
-		}
+			if (m_deliveryManager.processSequenceNumber(packet)) {
+				uint32 nextExpectedInputSequenceNumber;
+				packet.Read(nextExpectedInputSequenceNumber);
+				inputDataFront = nextExpectedInputSequenceNumber;
+				m_replicationManager.read(packet);
+
+				if (m_deliveryManager.hasSequenceNumbersPendingAck()) {
+					OutputMemoryStream stream;
+					stream << ClientMessage::Ack;
+					m_deliveryManager.writeSequenceNumbersPendingAck(stream);
+					sendPacket(stream, fromAddress);
+				}
+
+			}
+		}	
 	}
 
 }
@@ -261,6 +268,8 @@ void ModuleNetworkingClient::onDisconnect()
 	uint16 networkGameObjectsCount;
 	App->modLinkingContext->getNetworkGameObjects(networkGameObjects, &networkGameObjectsCount);
 	App->modLinkingContext->clear();
+
+	m_deliveryManager.clear();
 
 	for (uint32 i = 0; i < networkGameObjectsCount; ++i)
 	{
