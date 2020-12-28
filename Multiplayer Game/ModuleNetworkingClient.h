@@ -104,6 +104,8 @@ private:
 
 	// TODO(you): Reliability on top of UDP lab session
 
+	DeliveryManager m_deliveryManager;
+
 	/*
 	-notificar servidor de que he recivido
 	-

@@ -58,6 +58,7 @@ private:
 		ReplicationManagerServer m_replicationManager;
 
 		// TODO(you): Reliability on top of UDP lab session
+		DeliveryManager m_deliveryManager;
 
 		uint32 nextExpectedInputSequenceNumber = 0;
 		InputController gamepad;
@@ -133,8 +134,6 @@ private:
 
 	// TODO(you): UDP virtual connection lab session
 	float secondsSinceLastPing = 0.0f;
-
-
 };
 
 

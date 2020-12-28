@@ -48,7 +48,7 @@ bool DeliveryManager::hasSequenceNumbersPendingAck() const
 	return !pendingAck.empty();
 }
 
-void DeliveryManager::writeSequenceNumberPendingAck(OutputMemoryStream& packet)
+void DeliveryManager::writeSequenceNumbersPendingAck(OutputMemoryStream& packet)
 {
 	for (auto it : pendingAck)
 	{
@@ -86,9 +86,9 @@ void DeliveryManager::processAckdSequenceNumbers(const InputMemoryStream& packet
 
 }
 
-void DeliveryManager::processTimeOutPackets()
+void DeliveryManager::processTimedOutPackets()
 {
-	for (std::list<Delivery*>::iterator it = pendingDeliveries.begin(); it != pendingDeliveries.end(); it++)
+	for (auto it = pendingDeliveries.begin(); it != pendingDeliveries.end();)
 	{
 		if (Time.time - (*it)->dispatchTime >= PACKET_DELIVERY_TIMEOUT_SECONDS)
 		{
@@ -119,4 +119,33 @@ void DeliveryManager::clear()
 
 	outgoingSequenceNumber = 0;
 	expectedSequenceNumber = 0;
+}
+
+ReplicationDeliveryDelegate::ReplicationDeliveryDelegate(ReplicationManagerServer* replicationManager) :replicationManager(replicationManager)
+{
+	for (std::map<uint32, ReplicationCommand>::iterator it = replicationManager->actions.begin(); it != replicationManager->actions.end(); ++it)
+	{
+		actions.push_back((*it).second);
+	}
+}
+
+void ReplicationDeliveryDelegate::repeatReplication()
+{
+	for (std::vector<ReplicationCommand>::iterator it = actions.begin(); it != actions.end(); ++it)
+	{
+		switch ((*it).action)
+		{
+		case ReplicationAction::Create:
+			replicationManager->create((*it).networkId);
+			break;
+		case ReplicationAction::Update:
+			replicationManager->update((*it).networkId);
+			break;
+		case ReplicationAction::Destroy:
+			replicationManager->destroy((*it).networkId);
+			break;
+		default:
+			break;
+		}
+	}
 }
