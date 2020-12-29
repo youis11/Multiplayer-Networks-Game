@@ -117,10 +117,15 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 					proxy->connected = true;
 					proxy->name = playerName;
 					proxy->clientId = nextClientId++;
-					if (spaceshipType == 0) player1_joined = true;
-					if (spaceshipType == 1) player2_joined = true;
 
-					if (clientProxies[0].connected && clientProxies[1].connected && !game_is_full && player1_joined && player2_joined)
+					spaceshipType = NumberofConnectedProxies();
+
+					if (CheckIfPlayer2AlreadyExists())
+						spaceshipType = ClientType::PLAYER1;
+
+					proxy->clientType = (ClientType)spaceshipType;
+
+					if (IsGameFull())
 					{
 						// Create new network object BALL
 						vec2 initialBallPosition = { 0,0 };
@@ -134,8 +139,6 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 						vec2 initialGoalPosition = { 500, 0 };
 						proxy->gameObject = spawnGoal(initialGoalPosition);
 						proxy->gameObject = spawnGoal(initialGoalPosition * -1);
-
-						game_is_full = true;
 					}
 
 					// Create new network object SCORE
@@ -315,8 +318,7 @@ void ModuleNetworkingServer::onConnectionReset(const sockaddr_in & fromAddress)
 	{
 		// Clear the client proxy
 		destroyClientProxy(proxy);
-		player1_joined = false;
-		player2_joined = false;
+
 	}
 }
 
@@ -336,8 +338,6 @@ void ModuleNetworkingServer::onDisconnect()
 	}
 	
 	nextClientId = 0;
-	player1_joined = false;
-	player2_joined = false;
 	state = ServerState::Stopped;
 }
 
@@ -383,6 +383,12 @@ void ModuleNetworkingServer::destroyClientProxy(ClientProxy *clientProxy)
 	{
 		destroyNetworkObject(clientProxy->gameObject);
 	}
+	uint8 size = clientProxy->attachedGameObjects.size();
+
+	for (uint8 i = 0; i < size; i++)
+	{
+		destroyNetworkObject(clientProxy->attachedGameObjects[i]);
+	}
 
     *clientProxy = {};
 }
@@ -398,6 +404,37 @@ void ModuleNetworkingServer::playNetworkAudio(std::string fileName)
 		}
 	}
 
+}
+
+bool ModuleNetworkingServer::IsGameFull()
+{
+	for (uint8 i = 0; i < MAX_CLIENTS; ++i)
+	{
+		if (!clientProxies[i].connected)
+			return false;
+	}
+	return true;
+}
+
+uint8 ModuleNetworkingServer::NumberofConnectedProxies()
+{
+	uint8 a = 0;
+	for (uint8 i = 0; i < MAX_CLIENTS; ++i)
+	{
+		if (clientProxies[i].connected)
+			a++;
+	}
+	return a;
+}
+
+bool ModuleNetworkingServer::CheckIfPlayer2AlreadyExists()
+{
+	for (uint8 i = 0; i < MAX_CLIENTS; ++i)
+	{
+		if (clientProxies[i].connected && clientProxies[i].clientType == ClientType::PLAYER2)
+			return true;
+	}
+	return false;
 }
 
 

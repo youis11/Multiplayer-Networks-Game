@@ -12,7 +12,12 @@ public:
 
 	void setListenPort(int port);
 
-
+	enum ClientType
+	{
+		NONE,
+		PLAYER1,
+		PLAYER2
+	};
 
 private:
 
@@ -40,7 +45,6 @@ private:
 	//////////////////////////////////////////////////////////////////////
 
 	uint32 nextClientId = 0;
-	bool game_is_full = false;
 
 	struct ClientProxy
 	{
@@ -49,6 +53,7 @@ private:
 		uint32 clientId;
 		std::string name;
 		GameObject *gameObject = nullptr;
+		std::vector<GameObject*> attachedGameObjects;
 
 		// TODO(you): UDP virtual connection lab session
 		double lastPacketReceivedTime = 0.0f;
@@ -62,6 +67,8 @@ private:
 
 		uint32 nextExpectedInputSequenceNumber = 0;
 		InputController gamepad;
+
+		ClientType clientType = ClientType::PLAYER1;
 	};
 public:
 	ClientProxy clientProxies[MAX_CLIENTS];
@@ -74,6 +81,9 @@ public:
 
 	void playNetworkAudio(std::string fileName);
 
+	bool IsGameFull();
+	uint8 NumberofConnectedProxies();
+	bool CheckIfPlayer2AlreadyExists();
 
 public:
 
@@ -86,9 +96,6 @@ public:
 	GameObject * spawnWall(vec2 initialPosition);
 	GameObject * spawnGoal(vec2 initialPosition);
 	GameObject * spawnScore(uint8 spaceshipType, vec2 initialPosition);
-private:
-	bool player1_joined = false;
-	bool player2_joined = false;
 
 private:
 

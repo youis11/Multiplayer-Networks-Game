@@ -100,50 +100,33 @@ void ReplicationManagerServer::serializeCreate(OutputMemoryStream& packet, GameO
 	}
 	else
 	{
-		packet.Write(false); //Sprite existsn't
+		packet.Write(false); 
 	}
 	
-	//packet.Write(gameObject->animation); //i guess it doesnt need any else
-
 	// Collider component
 	if (gameObject->collider != nullptr)
 	{
-		packet.Write(true); //Collider exists
+		packet.Write(true);
 		packet.Write(gameObject->collider->type);
 		packet.Write(gameObject->collider->isTrigger);
 	}
 	else
 	{
-		packet.Write(false); //Collider existsn't
+		packet.Write(false);
 	}
 
 	//Behaviour
-	// TODO: si te behaviour llegir el type
-	if (gameObject->behaviour != nullptr)
+	/*if (gameObject->behaviour != nullptr)
 	{
-		packet.Write(true); //Behaviour exists
+		packet.Write(true); 
 		BehaviourType b_type = gameObject->behaviour->type();
 		packet.Write(b_type);
-
-		if (b_type == BehaviourType::Spaceship)
-		{
-			uint32 type = 0;
-			packet.Write(type);
-		}
-		if (b_type == BehaviourType::Score)
-		{
-			uint32 type = 0;
-			packet.Write(type);
-		}
-
 	}
 	else
 	{
-		packet.Write(false); //Behaviour existsn't
-	}
+		packet.Write(false);
+	}*/
 
-	// Tag for custom usage
-	//packet.Write(gameObject->tag);
 }
 
 void ReplicationManagerServer::serializeUpdate(OutputMemoryStream& packet, GameObject* gameObject) const

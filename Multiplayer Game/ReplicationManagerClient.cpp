@@ -137,50 +137,30 @@ void ReplicationManagerClient::deserializeCreate(const InputMemoryStream& packet
 
 
 	//TODO(done): treure lo del collider y utilitzar el type() 
-	packet.Read(exists);
-	if (exists)
-	{
-		BehaviourType b_type = BehaviourType::None;
-		packet.Read(b_type);
-
-		uint32 type; //If the behaviour has more than 1 type...
-		if (b_type == BehaviourType::Spaceship)
-		{
-			packet.Read(type);
-		}
-		else if (b_type == BehaviourType::Score)
-		{
-			packet.Read(type);
-		}
-		else
-			type = 0;
-		
-
-		if(gameObject->behaviour == nullptr)
-			gameObject->behaviour = App->modBehaviour->addBehaviour(b_type, gameObject, type);
-	}
-	else
-	{
-		WLOG("** GameObject id: %i without COLLIDER **", gameObject->networkId);
-	}
-
-	//if (gameObject->behaviour == nullptr) 
+	//packet.Read(exists);
+	//if (exists)
 	//{
-	//	switch (c_type) {
-	//	case ColliderType::Player: {
-	//		gameObject->behaviour = App->modBehaviour->addBehaviour(BehaviourType::Spaceship, gameObject);
-	//		break;
-	//	}
-	//	case ColliderType::Laser: {
-	//		gameObject->behaviour = App->modBehaviour->addBehaviour(BehaviourType::Laser, gameObject);
-	//		break;
-	//	}
-	//	default: {
-	//		gameObject->behaviour = App->modBehaviour->addBehaviour(BehaviourType::Laser, gameObject);
-	//		break;
-	//	}
-	//	}
-	//	gameObject->behaviour->gameObject = gameObject;
+	//	BehaviourType b_type = BehaviourType::None;
+	//	packet.Read(b_type);
+
+	//	uint32 type = 0; //If the behaviour has more than 1 type...
+	//	//if (b_type == BehaviourType::Spaceship)
+	//	//{
+	//	//	packet.Read(type);
+	//	//}
+	//	//else if (b_type == BehaviourType::Score)
+	//	//{
+	//	//	packet.Read(type);
+	//	//}
+	//	//else
+	//	//	type = 0;
+
+	//	if(gameObject->behaviour == nullptr)
+	//		gameObject->behaviour = App->modBehaviour->addBehaviour(b_type, gameObject, type);
+	//}
+	//else
+	//{
+	//	WLOG("** GameObject id: %i without COLLIDER **", gameObject->networkId);
 	//}
 
 

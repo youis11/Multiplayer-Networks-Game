@@ -32,11 +32,14 @@ Behaviour *ModuleBehaviour::addBehaviour(BehaviourType behaviourType, GameObject
 	{
 	case BehaviourType::Score:
 		return addScore(parentGameObject, space_ship_type);
-	default:
 	case BehaviourType::Spaceship:
 		return addSpaceship(parentGameObject, space_ship_type);
-		return nullptr;
+	case BehaviourType::Ball:
+		return addBall(parentGameObject);
+	default:
+		break;
 	}
+	
 }
 
 Spaceship *ModuleBehaviour::addSpaceship(GameObject *parentGameObject, uint32 type)
@@ -49,9 +52,9 @@ Spaceship *ModuleBehaviour::addSpaceship(GameObject *parentGameObject, uint32 ty
 			behaviour.gameObject = parentGameObject;
 			parentGameObject->behaviour = &behaviour;
 
-			if (type == 0)
+			if (type == 1)
 				behaviour.playerNum = behaviour.PlayerNum::PLAYER1;
-			else
+			else if(type == 2)
 				behaviour.playerNum = behaviour.PlayerNum::PLAYER2;
 
 			return &behaviour;
@@ -106,9 +109,9 @@ Score* ModuleBehaviour::addScore(GameObject* parentGameObject, uint32 type)
 			behaviour = {};
 			behaviour.gameObject = parentGameObject;
 			parentGameObject->behaviour = &behaviour;
-			if (type == 0)
+			if (type == 1)
 				behaviour.scorePlayerNum = behaviour.ScorePlayerNum::SCORE_PLAYER1;
-			else
+			else if (type == 2)
 				behaviour.scorePlayerNum = behaviour.ScorePlayerNum::SCORE_PLAYER2;
 
 			return &behaviour;

@@ -48,24 +48,8 @@ void ScreenMainMenu::gui()
 	static char playerNameStr[64] = "";
 	ImGui::InputText("Player name", playerNameStr, sizeof(playerNameStr));
 
-	const char* spaceshipTypes[] = { "Player 1", "Player 2"};
-	static const char* spaceshipTypeStr = spaceshipTypes[0];
-	static uint8 spaceshipType = 0;
-	if (ImGui::BeginCombo("Spaceship##combo", spaceshipTypeStr)) // The second parameter is the label previewed before opening the combo.
-	{
-		for (uint8 i = 0; i < IM_ARRAYSIZE(spaceshipTypes); i++)
-		{
-			bool is_selected = (spaceshipTypeStr == spaceshipTypes[i]); // You can store your selection however you want, outside or inside your objects
-			if (ImGui::Selectable(spaceshipTypes[i], is_selected))
-			{
-				spaceshipTypeStr = spaceshipTypes[i];
-				spaceshipType = i;
-			}
-			if (is_selected)
-				ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
-		}
-		ImGui::EndCombo();
-	}
+
+	static uint8 spaceshipType = 0;	
 
 	static bool showInvalidUserName = false;
 
