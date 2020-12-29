@@ -53,7 +53,7 @@ private:
 		uint32 clientId;
 		std::string name;
 		GameObject *gameObject = nullptr;
-		std::vector<GameObject*> attachedGameObjects;
+		std::vector<GameObject*> attachedProxyObjects;
 
 		// TODO(you): UDP virtual connection lab session
 		double lastPacketReceivedTime = 0.0f;
@@ -70,6 +70,9 @@ private:
 
 		ClientType clientType = ClientType::PLAYER1;
 	};
+
+	std::vector<GameObject*> serverGameObjects;
+
 public:
 	ClientProxy clientProxies[MAX_CLIENTS];
 

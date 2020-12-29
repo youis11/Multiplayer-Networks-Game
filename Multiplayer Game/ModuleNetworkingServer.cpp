@@ -130,19 +130,19 @@ void ModuleNetworkingServer::onPacketReceived(const InputMemoryStream &packet, c
 						// Create new network object BALL
 						vec2 initialBallPosition = { 0,0 };
 						float initialBallAngle = 360.0f * Random.next();
-						proxy->gameObject = spawnBall(initialBallPosition, initialBallAngle);
+						serverGameObjects.push_back(spawnBall(initialBallPosition, initialBallAngle));
 						// Create new network object WALL
 						vec2 initialWallPosition = { 0,370 };
-						proxy->gameObject = spawnWall(initialWallPosition);
-						proxy->gameObject = spawnWall(initialWallPosition * -1);
+						serverGameObjects.push_back(spawnWall(initialWallPosition));
+						serverGameObjects.push_back(spawnWall(initialWallPosition * -1));
 						// Create new network object GOAL
 						vec2 initialGoalPosition = { 500, 0 };
-						proxy->gameObject = spawnGoal(initialGoalPosition);
-						proxy->gameObject = spawnGoal(initialGoalPosition * -1);
+						serverGameObjects.push_back(spawnGoal(initialGoalPosition));
+						serverGameObjects.push_back(spawnGoal(initialGoalPosition * -1));
 					}
 
 					// Create new network object SCORE
-					proxy->gameObject = spawnScore(spaceshipType, { 0,0 });		
+					proxy->attachedProxyObjects.push_back(spawnScore(spaceshipType, { 0,0 }));
 
 					// Create new network object PLAYER
 					vec2 initialPosition = 500.0f * vec2{ Random.next() - 0.5f, Random.next() - 0.5f };
@@ -383,13 +383,19 @@ void ModuleNetworkingServer::destroyClientProxy(ClientProxy *clientProxy)
 	{
 		destroyNetworkObject(clientProxy->gameObject);
 	}
-	uint8 size = clientProxy->attachedGameObjects.size();
 
-	for (uint8 i = 0; i < size; i++)
-	{
-		destroyNetworkObject(clientProxy->attachedGameObjects[i]);
-	}
+	uint8 size_server_obj = serverGameObjects.size();
 
+	for (uint8 i = 0; i < size_server_obj; i++)
+		destroyNetworkObject(serverGameObjects[i]);
+
+	uint8 size_proxy_obj = clientProxy->attachedProxyObjects.size();
+
+	for (uint8 i = 0; i < size_proxy_obj; i++)
+		destroyNetworkObject(clientProxy->attachedProxyObjects[i]);
+
+	serverGameObjects.clear();
+	clientProxy->attachedProxyObjects.clear();
     *clientProxy = {};
 }
 

@@ -46,14 +46,14 @@ void ScreenMainMenu::gui()
 	ImGui::InputInt("Server port", &remoteServerPort);
 
 	static char playerNameStr[64] = "";
-	ImGui::InputText("Player name", playerNameStr, sizeof(playerNameStr));
+	ImGui::InputText("Useless name", playerNameStr, sizeof(playerNameStr));
 
 
 	static uint8 spaceshipType = 0;	
 
 	static bool showInvalidUserName = false;
 
-	if (ImGui::Button("Connect to server"))
+	if (ImGui::Button("Play PONG"))
 	{
 		if (isValidPlayerName(playerNameStr))
 		{
