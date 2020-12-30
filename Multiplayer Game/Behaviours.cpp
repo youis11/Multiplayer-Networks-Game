@@ -308,7 +308,6 @@ void Ball::ResetBall(int player_scored)
 	ball_y = 0;
 	if(player_scored == 1)	ball_x = -50;
 	else if(player_scored == 2)	ball_x = 50;
-	PlayAudioClip("playerWins.wav");
 
 	gameObject->position = {ball_x, ball_y};
 

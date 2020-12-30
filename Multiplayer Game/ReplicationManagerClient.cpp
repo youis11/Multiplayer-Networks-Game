@@ -133,39 +133,6 @@ void ReplicationManagerClient::deserializeCreate(const InputMemoryStream& packet
 	{
 		WLOG("** GameObject without COLLIDER loaded id: %i **", gameObject->networkId);
 	}
-	
-
-
-	//TODO(done): treure lo del collider y utilitzar el type() 
-	//packet.Read(exists);
-	//if (exists)
-	//{
-	//	BehaviourType b_type = BehaviourType::None;
-	//	packet.Read(b_type);
-
-	//	uint32 type = 0; //If the behaviour has more than 1 type...
-	//	//if (b_type == BehaviourType::Spaceship)
-	//	//{
-	//	//	packet.Read(type);
-	//	//}
-	//	//else if (b_type == BehaviourType::Score)
-	//	//{
-	//	//	packet.Read(type);
-	//	//}
-	//	//else
-	//	//	type = 0;
-
-	//	if(gameObject->behaviour == nullptr)
-	//		gameObject->behaviour = App->modBehaviour->addBehaviour(b_type, gameObject, type);
-	//}
-	//else
-	//{
-	//	WLOG("** GameObject id: %i without COLLIDER **", gameObject->networkId);
-	//}
-
-
-	// Tag for custom usage
-	//packet.Read(gameObject->tag);
 }
 
 void ReplicationManagerClient::deserializeUpdate(const InputMemoryStream& packet, GameObject* gameObject)
