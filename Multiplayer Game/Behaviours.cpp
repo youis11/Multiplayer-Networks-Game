@@ -56,6 +56,7 @@ void Spaceship::start()
 
 void Spaceship::onInput(const InputController &input)
 {
+	// Controller Inputs
 	if (input.verticalAxis != 0.0f)
 	{
 		float speed = 700.0f;
@@ -68,6 +69,27 @@ void Spaceship::onInput(const InputController &input)
 		{
 			gameObject->position.y -= input.verticalAxis * speed * Time.deltaTime;
 			
+		}
+
+		if (gameObject->position.y < min_high)
+			gameObject->position.y = min_high;
+		if (gameObject->position.y > max_high)
+			gameObject->position.y = max_high;
+	}
+
+	// KeyBoard Inputs
+	if (input.actionDown == ButtonState::Press)
+	{
+		float speed = 700.0f;
+		if (input.actionDown == ButtonState::Pressed || input.actionUp == ButtonState::Pressed || input.actionRight == ButtonState::Pressed || input.actionLeft == ButtonState::Pressed)
+			speed *= 4.0f;
+
+		float max_high = 265;
+		float min_high = -265;
+		if (gameObject->position.y >= min_high && gameObject->position.y <= max_high)
+		{
+			gameObject->position.y -= speed * Time.deltaTime;
+
 		}
 
 		if (gameObject->position.y < min_high)
