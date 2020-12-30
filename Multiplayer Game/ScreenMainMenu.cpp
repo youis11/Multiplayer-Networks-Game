@@ -46,7 +46,7 @@ void ScreenMainMenu::gui()
 	ImGui::InputInt("Server port", &remoteServerPort);
 
 	static char playerNameStr[64] = "";
-	ImGui::InputText("Useless name", playerNameStr, sizeof(playerNameStr));
+	ImGui::InputText("Name", playerNameStr, sizeof(playerNameStr));
 
 
 	static uint8 spaceshipType = 0;	
