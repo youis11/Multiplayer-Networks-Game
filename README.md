@@ -21,27 +21,27 @@ Marc Gálvez Llorens [optus23](https://github.com/optus23)
 #### Lluís Moreu: 
 
 UDP Virtual connection 
-  : COMPLETELY ARCHIEVED.
+* COMPLETELY ARCHIEVED.
 
 World state replication 
-  : ARCHIEVED with BUGS related to update serialization that Marc helped to fix creating a Map of actions and then a couple of bugs where left that I FIXED where the create and update states needed different serialization functions.
+* ARCHIEVED with BUGS related to update serialization that Marc helped to fix creating a Map of actions and then a couple of bugs where left that I FIXED where the create and update states needed different serialization functions.
 
 Reliability on top of UDP
-  : COMPLETELY ARCHIEVED I changed the redundant sending because even if it was working well, I needed to change it for the Delivery manager implementation because I was sending different packets that could be in one.
+* COMPLETELY ARCHIEVED I changed the redundant sending because even if it was working well, I needed to change it for the Delivery manager implementation because I was sending different packets that could be in one.
 ___
 
 #### Marc Gálvez
 World state replication
-  :FIXING some BUGS relating to update serialization, created a Map to help updating the actions because with a vector we were deleting the action so on the update it couldn't find it anymore
+* FIXING some BUGS relating to update serialization, created a Map to help updating the actions because with a vector we were deleting the action so on the update it couldn't find it anymore
  
 Redundant sending of input packets
-  :COMPLETELY ARCHIEVED
+* COMPLETELY ARCHIEVED
  
 Everything Gameplay related including art
-  :COMPLETELY ARCHIEVED, Barriers movement and collision, Scores, Wall, Goal, Reset Game Behaviors.
-  :Audio in Server and Audio in Replication reproduce.
-  :Accept a certain number of players (delimited to two players in the game, if another player wants to enter, the menu screen will kick out him, the menu will automatically distribute the type of player (1 or 2) to fill the game correctly).
-  :Handle players join/leave events (if one of the two players exists the game, his score and the ball must disappear. If another player enters the game. The match will continue).
+* COMPLETELY ARCHIEVED, Barriers movement and collision, Scores, Wall, Goal, Reset Game Behaviors.
+* Audio in Server and Audio in Replication reproduce.
+* Accept a certain number of players (delimited to two players in the game, if another player wants to enter, the menu screen will kick out him, the menu will automatically distribute the type of player (1 or 2) to fill the game correctly).
+* Handle players join/leave events (if one of the two players exists the game, his score and the ball must disappear. If another player enters the game. The match will continue).
 
 ## Controls
 
