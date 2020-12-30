@@ -3,7 +3,7 @@
 
 bool ModuleBehaviour::update()
 {
-	for (Spaceship &behaviour : spaceships)
+	for (PongBarrier &behaviour : spaceships)
 	{
 		handleBehaviourLifeCycle(&behaviour);
 	}
@@ -17,12 +17,6 @@ bool ModuleBehaviour::update()
 	{
 		handleBehaviourLifeCycle(&behaviour);
 	}
-	
-	/*for (Laser &behaviour : lasers)
-	{
-		handleBehaviourLifeCycle(&behaviour);
-	}*/
-
 	return true;
 }
 
@@ -42,9 +36,9 @@ Behaviour *ModuleBehaviour::addBehaviour(BehaviourType behaviourType, GameObject
 	
 }
 
-Spaceship *ModuleBehaviour::addSpaceship(GameObject *parentGameObject, uint32 type)
+PongBarrier *ModuleBehaviour::addSpaceship(GameObject *parentGameObject, uint32 type)
 {
-	for (Spaceship &behaviour : spaceships)
+	for (PongBarrier &behaviour : spaceships)
 	{
 		if (behaviour.gameObject == nullptr)
 		{
@@ -57,23 +51,6 @@ Spaceship *ModuleBehaviour::addSpaceship(GameObject *parentGameObject, uint32 ty
 			else if(type == 2)
 				behaviour.playerNum = behaviour.PlayerNum::PLAYER2;
 
-			return &behaviour;
-		}
-	}
-
-	ASSERT(false);
-	return nullptr;
-}
-
-Laser *ModuleBehaviour::addLaser(GameObject *parentGameObject)
-{
-	for (Laser &behaviour : lasers)
-	{
-		if (behaviour.gameObject == nullptr)
-		{
-			behaviour = {};
-			behaviour.gameObject = parentGameObject;
-			parentGameObject->behaviour = &behaviour;
 			return &behaviour;
 		}
 	}

@@ -17,27 +17,21 @@ void ModuleResources::TaskLoadTexture::execute()
 
 bool ModuleResources::init()
 {
-	background = App->modTextures->loadTexture("background.jpg");
+	background = App->modTextures->loadTexture("Pong.jpg");
 
 #if !defined(USE_TASK_MANAGER)
-	space = App->modTextures->loadTexture("space_background.jpg");
-	asteroid1 = App->modTextures->loadTexture("asteroid1.png");
-	asteroid2 = App->modTextures->loadTexture("asteroid2.png");
-	spacecraft1 = App->modTextures->loadTexture("spacecraft1.png");
-	spacecraft2 = App->modTextures->loadTexture("spacecraft2.png");
-	spacecraft3 = App->modTextures->loadTexture("spacecraft3.png");
+	space = App->modTextures->loadTexture("background.jpg");
+	asteroid1 = App->modTextures->loadTexture("ball.png");
+	asteroid2 = App->modTextures->loadTexture("wall.png");
+	spacecraft1 = App->modTextures->loadTexture("player.png");
 
 	loadingFinished = true;
 	completionRatio = 1.0f;
 #else
-	loadTextureAsync("space_background.jpg", &space, 0);
-	loadTextureAsync("asteroid1.png",        &asteroid1, 1);
-	loadTextureAsync("asteroid2.png",        &asteroid2, 2);
-	loadTextureAsync("spacecraft1.png",      &spacecraft1, 3);
-	loadTextureAsync("spacecraft2.png",      &spacecraft2, 4);
-	loadTextureAsync("spacecraft3.png",      &spacecraft3, 5);
-	loadTextureAsync("laser.png",            &laser, 6);
-	loadTextureAsync("explosion1.png",       &explosion1, 7);
+	loadTextureAsync("background.jpg", &space, 0);
+	loadTextureAsync("ball.png",        &ball, 1);
+	loadTextureAsync("wall.png",        &wall, 2);
+	loadTextureAsync("player.png",      &player, 3);
 
 	loadTextureAsync("0.png",       &score_0, 8);
 	loadTextureAsync("1.png",       &score_1, 9);
@@ -51,14 +45,8 @@ bool ModuleResources::init()
 	loadTextureAsync("9.png",       &score_9, 17);
 #endif
 
-	audioClipLaser = App->modSound->loadAudioClip("laser.wav");
-	audioClipExplosion = App->modSound->loadAudioClip("explosion.wav");
 	audioClipStartGame = App->modSound->loadAudioClip("startGame.wav");
-	audioClipPlayerWin = App->modSound->loadAudioClip("playerWins.wav");
-	audioClipBallWall = App->modSound->loadAudioClip("playerBall.wav");
 	audioClipBallPlayer = App->modSound->loadAudioClip("playerBall.wav");
-	audioClipGoal = App->modSound->loadAudioClip("playerGoal.wav");
-	//audioClipBGM = App->modSound->loadAudioClip("BGMusic.ogg");
 	audioClipPlayerJoined = App->modSound->loadAudioClip("playerEnterGame.wav");
 
 	return true;
@@ -81,22 +69,14 @@ void ModuleResources::loadTextureAsync(const char * filename, Texture **textureP
 
 Texture* ModuleResources::FindByTextureName(std::string textureFilename)
 {
-	if (textureFilename == "space_background.jpg")
+	if (textureFilename == "background.jpg")
 		return space;
-	else if (textureFilename == "asteroid1.png")
-		return asteroid1;
-	else if (textureFilename == "asteroid2.png")
-		return asteroid2;
-	else if (textureFilename == "spacecraft1.png")
-		return spacecraft1;
-	else if (textureFilename == "spacecraft2.png")
-		return spacecraft2;
-	else if (textureFilename == "spacecraft3.png")
-		return spacecraft3;
-	else if (textureFilename == "laser.png")
-		return laser;
-	else if (textureFilename == "explosion1.png")
-		return explosion1;
+	else if (textureFilename == "ball.png")
+		return ball;
+	else if (textureFilename == "wall.png")
+		return wall;
+	else if (textureFilename == "player.png")
+		return player;
 	else if (textureFilename == "0.png")
 		return score_0;
 	else if (textureFilename == "1.png")
@@ -125,16 +105,8 @@ AudioClip* ModuleResources::FindByAudioClipName(std::string audioFilename)
 {
 	if (audioFilename == "startGame.wav")
 		return audioClipStartGame;
-	else if (audioFilename == "playerWins.wav")
-		return audioClipPlayerWin;
-	else if (audioFilename == "playerBall.wav")
-		return audioClipBallWall;
 	else if (audioFilename == "playerBall.wav")
 		return audioClipBallPlayer;
-	else if (audioFilename == "playerGoal.wav")
-		return audioClipGoal;
-	else if (audioFilename == "BGMusic.ogg")
-		return audioClipBGM;
 	else if (audioFilename == "playerEnterGame.wav")
 		return audioClipPlayerJoined;
 	else

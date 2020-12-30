@@ -3,35 +3,8 @@
 #include <string>
 #include <random>
 
-void Laser::start()
-{
-	gameObject->networkInterpolationEnabled = false;
-	App->modSound->playAudioClip(App->modResources->audioClipLaser);
-}
 
-void Laser::update()
-{
-	secondsSinceCreation += Time.deltaTime;
-
-	const float pixelsPerSecond = 1000.0f;
-	gameObject->position += vec2FromDegrees(gameObject->angle) * pixelsPerSecond * Time.deltaTime;
-
-	if (isServer)
-	{
-		const float lifetimeSeconds = 2.0f;
-		if (secondsSinceCreation >= lifetimeSeconds) {
-			NetworkDestroy(gameObject);
-		}
-	}
-}
-
-float Laser::GetSecondsLived()
-{
-	return secondsSinceCreation;
-}
-
-
-void Spaceship::start()
+void PongBarrier::start()
 {
 	gameObject->tag = (uint32)(Random.next() * UINT_MAX);
 	gameObject->angle = 0;
@@ -39,13 +12,13 @@ void Spaceship::start()
 
 	switch (playerNum)
 	{
-	case Spaceship::PLAYER1:
+	case PongBarrier::PLAYER1:
 		gameObject->position = {450,0};
 		break;
-	case Spaceship::PLAYER2:
+	case PongBarrier::PLAYER2:
 		gameObject->position = { -450,0 };
 		break;
-	case Spaceship::NONE:
+	case PongBarrier::NONE:
 		break;
 	default:
 		break;
@@ -54,7 +27,7 @@ void Spaceship::start()
 		NetworkUpdate(gameObject);
 }
 
-void Spaceship::onInput(const InputController &input)
+void PongBarrier::onInput(const InputController &input)
 {
 	if (input.verticalAxis != 0.0f)
 	{
@@ -79,23 +52,23 @@ void Spaceship::onInput(const InputController &input)
 		NetworkUpdate(gameObject);
 }
 
-void Spaceship::update()
+void PongBarrier::update()
 {
 }
 
-void Spaceship::destroy()
+void PongBarrier::destroy()
 {
 }
 
-void Spaceship::onCollisionTriggered(Collider &c1, Collider &c2)
+void PongBarrier::onCollisionTriggered(Collider &c1, Collider &c2)
 {
 }
 
-void Spaceship::write(OutputMemoryStream & packet)
+void PongBarrier::write(OutputMemoryStream & packet)
 {
 }
 
-void Spaceship::read(const InputMemoryStream & packet)
+void PongBarrier::read(const InputMemoryStream & packet)
 {
 }
 

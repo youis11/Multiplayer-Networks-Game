@@ -459,14 +459,14 @@ GameObject * ModuleNetworkingServer::spawnPlayer(uint8 spaceshipType, vec2 initi
 	// Create sprite
 	gameObject->sprite = App->modRender->addSprite(gameObject);
 	gameObject->sprite->order = 5;
-	gameObject->sprite->texture = App->modResources->spacecraft1;
+	gameObject->sprite->texture = App->modResources->player;
 
 	// Create collider
 	gameObject->collider = App->modCollision->addCollider(ColliderType::Player, gameObject);
 	gameObject->collider->isTrigger = true; // NOTE(jesus): This object will receive onCollisionTriggered events
 
 	// Create behaviour
-	Spaceship* spaceshipBehaviour = App->modBehaviour->addSpaceship(gameObject, spaceshipType);
+	PongBarrier* spaceshipBehaviour = App->modBehaviour->addSpaceship(gameObject, spaceshipType);
 	gameObject->behaviour = spaceshipBehaviour;
 	gameObject->behaviour->isServer = true;
 
@@ -484,7 +484,7 @@ GameObject* ModuleNetworkingServer::spawnBall(vec2 initialPosition, float initia
 	// Create sprite
 	gameObject->sprite = App->modRender->addSprite(gameObject);
 	gameObject->sprite->order = 6;
-	gameObject->sprite->texture = App->modResources->asteroid1;
+	gameObject->sprite->texture = App->modResources->ball;
 
 	// Create collider
 	gameObject->collider = App->modCollision->addCollider(ColliderType::Ball, gameObject);
@@ -509,7 +509,7 @@ GameObject* ModuleNetworkingServer::spawnWall(vec2 initialPosition)
 	// Create sprite
 	gameObject->sprite = App->modRender->addSprite(gameObject);
 	gameObject->sprite->order = 7;
-	gameObject->sprite->texture = App->modResources->asteroid2;
+	gameObject->sprite->texture = App->modResources->wall;
 
 	// Create collider
 	gameObject->collider = App->modCollision->addCollider(ColliderType::Wall, gameObject);
@@ -529,7 +529,7 @@ GameObject* ModuleNetworkingServer::spawnGoal(vec2 initialPosition)
 	// Create sprite
 	gameObject->sprite = App->modRender->addSprite(gameObject);
 	gameObject->sprite->order = 7;
-	gameObject->sprite->texture = App->modResources->asteroid2;
+	gameObject->sprite->texture = App->modResources->wall;
 
 	// Create collider
 	gameObject->collider = App->modCollision->addCollider(ColliderType::Goal, gameObject);

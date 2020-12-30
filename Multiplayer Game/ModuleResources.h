@@ -10,9 +10,9 @@ public:
 
 	Texture *background = nullptr;
 	Texture *space = nullptr;
-	Texture *asteroid1 = nullptr;
-	Texture *asteroid2 = nullptr;
-	Texture *spacecraft1 = nullptr;
+	Texture *ball = nullptr;
+	Texture *wall = nullptr;
+	Texture *player = nullptr;
 	Texture *spacecraft2 = nullptr;
 	Texture *spacecraft3 = nullptr;
 	Texture *laser = nullptr;
@@ -30,14 +30,8 @@ public:
 
 	AnimationClip *explosionClip = nullptr;
 
-	AudioClip *audioClipLaser = nullptr;
-	AudioClip *audioClipExplosion = nullptr;
 	AudioClip *audioClipPlayerJoined = nullptr;
 	AudioClip *audioClipBallPlayer = nullptr;
-	AudioClip *audioClipBallWall = nullptr;
-	AudioClip *audioClipGoal = nullptr;
-	AudioClip *audioClipBGM = nullptr;
-	AudioClip *audioClipPlayerWin = nullptr;
 	AudioClip *audioClipStartGame = nullptr;
 
 	bool finishedLoading = false;

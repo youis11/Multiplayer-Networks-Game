@@ -75,19 +75,6 @@ void ReplicationManagerClient::deserializeCreate(const InputMemoryStream& packet
 
 
 	bool exists = false;
-	// Texture component
-	/*int id;
-	packet.Read(id);
-
-	if (id != -1)
-	{
-		gameObject->sprite = App->modRender->addSprite(gameObject);
-
-		if (!gameObject->sprite)
-		{
-			gameObject->sprite->texture = App->modTextures->GetTextureByID(id);
-		}
-	}*/
 	packet.Read(exists);
 	if (exists)
 	{
