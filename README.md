@@ -19,6 +19,7 @@ Marc Gálvez Llorens [optus23](https://github.com/optus23)
 ### Contributions
 
 #### Lluís Moreu: 
+
 UDP Virtual connection 
   : COMPLETELY ARCHIEVED.
 
@@ -32,8 +33,10 @@ ___
 #### Marc Gálvez
 World state replication
   :FIXING some BUGS relating to update serialization, created a Map to help updating the actions because with a vector we were deleting the action so on the update it couldn't find it anymore
+ 
 Redundant sending of input packets
   :COMPLETELY ARCHIEVED
+ 
 Everything Gameplay related including art
   :COMPLETELY ARCHIEVED, Barriers movement and collision, Scores, Wall, Goal, Reset Game Behaviors.
   :Audio in Server and Audio in Replication reproduce.
