@@ -13,8 +13,6 @@ void ReplicationManagerServer::create(uint32 networkId)
 
 void ReplicationManagerServer::update(uint32 networkId)
 {
-	//TODO: buscas els commands and canvies cap a update
-	//m_replicationCommands.push_back(ReplicationCommand(ReplicationAction::Update, networkId));
 	if (actions[networkId].action == ReplicationAction::Create || actions[networkId].action == ReplicationAction::Destroy)
 		return;
 
@@ -23,7 +21,6 @@ void ReplicationManagerServer::update(uint32 networkId)
 
 void ReplicationManagerServer::destroy(uint32 networkId)
 {
-	//m_replicationCommands.push_back(ReplicationCommand(ReplicationAction::Destroy, networkId));
 	actions[networkId].action = ReplicationAction::Destroy;
 }
 
@@ -36,7 +33,6 @@ void ReplicationManagerServer::playAudio(uint32 networkId, std::string fileName)
 
 void ReplicationManagerServer::write(OutputMemoryStream& packet)
 {
-	//TODO: Rewrite this but well coded
 	for (auto i = actions.begin(); i != actions.end(); ++i) {
 
 		packet.Write(i->second.networkId);
@@ -114,18 +110,6 @@ void ReplicationManagerServer::serializeCreate(OutputMemoryStream& packet, GameO
 	{
 		packet.Write(false);
 	}
-
-	//Behaviour
-	/*if (gameObject->behaviour != nullptr)
-	{
-		packet.Write(true); 
-		BehaviourType b_type = gameObject->behaviour->type();
-		packet.Write(b_type);
-	}
-	else
-	{
-		packet.Write(false);
-	}*/
 
 }
 

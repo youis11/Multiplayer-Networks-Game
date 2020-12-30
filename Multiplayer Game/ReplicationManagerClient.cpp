@@ -28,11 +28,9 @@ void ReplicationManagerClient::read(const InputMemoryStream& packet)
 			{
 				App->modLinkingContext->registerNetworkGameObjectWithNetworkId(gameObject, networkID);
 				deserializeCreate(packet, gameObject);
-
 			}
 			break;
 		}
-
 		case ReplicationAction::Update: {
 			GameObject* gameObject = App->modLinkingContext->getNetworkGameObject(networkID);
 			deserializeUpdate(packet, gameObject);
@@ -40,7 +38,6 @@ void ReplicationManagerClient::read(const InputMemoryStream& packet)
 		}
 
 		case ReplicationAction::Destroy: {
-			// TODO: uncomment
 			GameObject* gameObject = App->modLinkingContext->getNetworkGameObject(networkID);
 			App->modLinkingContext->unregisterNetworkGameObject(gameObject);
 			App->modGameObject->Destroy(gameObject);
@@ -55,12 +52,7 @@ void ReplicationManagerClient::read(const InputMemoryStream& packet)
 			break;
 		}
 		}
-
-		
 	}
-
-
-	
 }
 
 void ReplicationManagerClient::deserializeCreate(const InputMemoryStream& packet, GameObject *gameObject)
@@ -84,32 +76,18 @@ void ReplicationManagerClient::deserializeCreate(const InputMemoryStream& packet
 			gameObject->sprite = App->modRender->addSprite(gameObject);
 			gameObject->sprite->texture = App->modResources->FindByTextureName(textureFilename);
 			packet.Read(gameObject->sprite->order);
-
-			/*packet.Read(gameObject->sprite->pivot.x);
-			packet.Read(gameObject->sprite->pivot.y);
-			packet.Read(gameObject->sprite->color.x);
-			packet.Read(gameObject->sprite->color.y);
-			packet.Read(gameObject->sprite->color.z);
-			packet.Read(gameObject->sprite->color.w);*/
 		}
 	}
 	else
 	{
 		WLOG("** GameObject without SPRITE loaded id: %i **", gameObject->networkId);
 	}
-	
-
-	//i guess it doesnt need any else
-	/*packet.Read(gameObject->animation->clip->);
-	if (gameObject->animation == nullptr)
-		gameObject->animation->clip = App->modResources->explosionClip;*/
 
 	// Collider component
 	packet.Read(exists);
 	if (exists)
 	{
 		ColliderType c_type = ColliderType::None;
-		// TODO (done): si no he llegit res perque era nullptr, no pillara res
 		packet.Read(c_type);
 		if(gameObject->collider == nullptr)
 			gameObject->collider = App->modCollision->addCollider(c_type, gameObject);
